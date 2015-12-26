@@ -1,0 +1,14 @@
+1: //&T-
+2: //test if statement with zero statement
+3: condition1;
+4: begin
+5:     var a : boolean;
+6:     if a then
+7:     else
+8:     end if
+9: end
+10: end condition1
+
+|--------------------------------|
+|  There is no syntactic error!  |
+|--------------------------------|

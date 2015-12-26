@@ -1,0 +1,24 @@
+1: //&T-
+2: //test begin & end of four levels
+3: compound2;
+4: begin
+5:     begin
+6:         begin
+7:             begin
+8:                     var a : integer;
+9:                     var b : 10;
+10:                     var c : real;
+11:                     var d : 3.14;
+12:                     var e : string;
+13:                     var f : "abc";
+14:                     a := b + 5;
+15:                     c := d - 3.14;
+16:             end
+17:         end
+18:     end
+19: end
+20: end compound2
+
+|--------------------------------|
+|  There is no syntactic error!  |
+|--------------------------------|

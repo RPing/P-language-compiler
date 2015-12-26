@@ -1,0 +1,25 @@
+1: /**
+2:  * boolean1.p: and or (binary operator)
+3:  */
+4: 
+5: //&T-
+6: 
+7: boolean1;
+8: 
+9: begin
+10:         var a, b: boolean;
+11:         var c: boolean;
+12: 
+13:         a := true;
+14:         b := false;
+15: 
+16:         c := a and b;
+17:         c := b and false;
+18:         c := a or true;
+19:         c := a and b or true and false;
+20: end
+21: end boolean1
+
+|--------------------------------|
+|  There is no syntactic error!  |
+|--------------------------------|

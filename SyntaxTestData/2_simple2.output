@@ -1,0 +1,15 @@
+1: //&T-
+2: //test print
+3: simple2;
+4: begin
+5:     var a : integer;
+6:     a := 1;
+7:     print a;
+8:     print 10000;
+9:     print a * 3 / 3 + 4;
+10: end
+11: end simple2
+
+|--------------------------------|
+|  There is no syntactic error!  |
+|--------------------------------|

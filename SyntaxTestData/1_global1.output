@@ -1,0 +1,25 @@
+1: /*
+2:  * Global_1
+3:  *
+4:  */
+5: //&T-
+6: global1;
+7: 
+8: var b, c: boolean;
+9: 
+10: 
+11: fun():integer;
+12: begin
+13:     return 10;
+14: end
+15: end fun
+16: 
+17: begin
+18:     var d : integer;
+19: end
+20: end global1
+21: 
+
+|--------------------------------|
+|  There is no syntactic error!  |
+|--------------------------------|

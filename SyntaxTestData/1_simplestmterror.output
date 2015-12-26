@@ -1,0 +1,20 @@
+1: /**
+2:  * simplestmterror.p: about assignment
+3:  */
+4: //&T-
+5: 
+6: simplestmterror;
+7: 
+8: func():integer;
+9: begin
+10:         return 321;
+11: end
+12: end func
+13: 
+14: begin
+
+|--------------------------------------------------------------------------
+| Error found in Line #15:         func() :=
+|
+| Unmatched token: :=
+|--------------------------------------------------------------------------

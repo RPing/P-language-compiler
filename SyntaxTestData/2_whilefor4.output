@@ -1,0 +1,19 @@
+1: //&T-
+2: //test for loop with some statements
+3: whilefor4;
+4: begin
+5:     var a : integer;
+6:     for a := 0 to 10 do
+7:         for a := 0 to 10 do
+8:         end do
+9:         for a := 0 to 10 do
+10:             for a := 0 to 10 do
+11:             end do
+12:         end do
+13:     end do
+14: end
+15: end whilefor4
+
+|--------------------------------|
+|  There is no syntactic error!  |
+|--------------------------------|

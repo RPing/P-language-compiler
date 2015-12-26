@@ -1,0 +1,16 @@
+1: //&T-
+2: //test function invocation with some arguments
+3: functioninvocation2;
+4:     func(a : integer; b : real; c : integer);
+5:     begin
+6:     end
+7:     end func
+8: begin
+9:     var d : integer;
+10:     func(5, 3.14, d);
+11: end
+12: end functioninvocation2
+
+|--------------------------------|
+|  There is no syntactic error!  |
+|--------------------------------|

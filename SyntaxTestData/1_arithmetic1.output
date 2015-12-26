@@ -1,0 +1,25 @@
+1: /**
+2:  * arithmetic1.p: arithmetic expressions, integer
+3:  */
+4: 
+5: //&T-
+6: 
+7: arithmetic1;
+8: 
+9: begin
+10: 
+11:         var a, b : integer;
+12: 
+13:         a := 1+1;
+14:         a := a+a;
+15:         a := a-3*4;
+16:         b := a*11;
+17:         b := a/b;
+18:         a := b/3;
+19:         b := 12345 mod a;
+20: end
+21: end arithmetic1
+
+|--------------------------------|
+|  There is no syntactic error!  |
+|--------------------------------|

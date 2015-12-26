@@ -1,0 +1,16 @@
+1: //&T-
+2: //test function invocation with zero argument
+3: functioninvocation1;
+4:     func() : integer;
+5:     begin
+6:     end
+7:     end func
+8: begin
+9:     var a: integer;
+10:     a := func();
+11: end
+12: end functioninvocation1
+
+|--------------------------------|
+|  There is no syntactic error!  |
+|--------------------------------|

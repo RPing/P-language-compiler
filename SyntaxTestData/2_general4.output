@@ -1,0 +1,27 @@
+1: /**
+2:  * general4.p: general case 4
+3:  */
+4: //&T-
+5: 
+6: general4;
+7: 
+8: recursive( index: integer ): integer;
+9: begin
+10:         if ( index = 1 ) then  
+11:                 return 1;
+12:         else
+13:                 return recursive( index-1 )+index;
+14:         end if
+15: end 
+16: end recursive
+17: 
+18: begin
+19:         var a : integer;
+20:         read a;
+21:         print recursive(a);
+22: end 
+23: end general4
+
+|--------------------------------|
+|  There is no syntactic error!  |
+|--------------------------------|

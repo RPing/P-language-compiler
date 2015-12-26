@@ -1,0 +1,25 @@
+1: /*
+2:  * Function_7
+3:  *
+4:  */
+5: //&T-
+6: func7;
+7: 
+8: var a : integer;
+9: 
+10: func( aa, bb : integer ) : integer ;
+11: begin
+12:     var b : string;         
+13:     return 10;
+14: end
+15: end func
+16: 
+17: begin
+18:     var d : integer;
+19: end
+20: end func7
+21: 
+
+|--------------------------------|
+|  There is no syntactic error!  |
+|--------------------------------|

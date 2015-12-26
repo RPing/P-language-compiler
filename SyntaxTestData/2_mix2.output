@@ -1,0 +1,25 @@
+1: /**
+2:  * mix2.p: mixed expression(s)
+3:  */
+4: 
+5: //&T-
+6: 
+7: mix2;
+8: 
+9: begin
+10:         var a, b: integer;
+11:         var d: real;
+12:         var e: boolean;
+13: 
+14:         e := 1+2*3 < a;
+15:         e := a >= 48 and a <= 57;
+16:         e := a+b < d;
+17:         e := d*23.4 >= 100.0;
+18:         e := (1+2)*(3+4) <> a;
+19: 
+20: end
+21: end mix2
+
+|--------------------------------|
+|  There is no syntactic error!  |
+|--------------------------------|

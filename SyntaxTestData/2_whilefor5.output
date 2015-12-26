@@ -1,0 +1,24 @@
+1: //&T-
+2: //test for and while loop with some statement
+3: whilefor5;
+4: begin
+5:     var a : boolean;
+6:     var b : integer;
+7:     while a do
+8:         for b := 0 to 10 do
+9:             while a do
+10:             end do
+11:             for b := 0 to 10 do
+12:             end do
+13:         end do
+14:         while a do
+15:         end do
+16:     end do
+17:     
+18:     
+19: end
+20: end whilefor5
+
+|--------------------------------|
+|  There is no syntactic error!  |
+|--------------------------------|

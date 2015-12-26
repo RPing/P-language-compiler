@@ -1,0 +1,26 @@
+1: //&T-
+2: //compounderror function loses a keyword
+3: compounderror;
+4:     func () : integer;
+5:     begin
+6:     end
+7:     end func
+8: begin
+9:     var b : integer;
+10:     var a : real;
+11:     begin
+12:         begin
+13:             begin
+14:                 begin
+15:                     begin        
+16:                 end
+17:             end
+18:         end
+19:     end
+20: end                                  //lose end
+
+|--------------------------------------------------------------------------
+| Error found in Line #21: end compounderror
+|
+| Unmatched token: compounderror
+|--------------------------------------------------------------------------

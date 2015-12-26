@@ -1,0 +1,32 @@
+1: /*
+2:  * Function_4
+3:  *
+4:  */
+5: //&T-
+6: func4;
+7: 
+8: var a : integer;
+9: 
+10: fun(): array 1 to 5 of integer;   // return 1D size=5 integer array
+11: begin
+12:     var tmp : array 1 to 5 of integer;
+13:     return tmp;
+14: end
+15: end fun
+16: 
+17: fun2(): array 1 to 5 of array 1 to 10 of integer;  // return 2D 5x10 integer array 
+18: begin
+19:     var tmp : array 1 to 5 of array 1 to 10 of integer;
+20:     return tmp;
+21: end
+22: end fun2 
+23: 
+24: begin
+25:     var d : integer;
+26: end
+27: end func4
+28: 
+
+|--------------------------------|
+|  There is no syntactic error!  |
+|--------------------------------|

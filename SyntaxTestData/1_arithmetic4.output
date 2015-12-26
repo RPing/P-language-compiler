@@ -1,0 +1,19 @@
+1: /**
+2:  * arithmetic4.p: with unary - 
+3:  */
+4:  //&T-
+5: arithmetic4;
+6: 
+7: begin
+8:         var a, b: integer;
+9:         a := 1;
+10:         b := -1;
+11:         b := -10-a;
+12:         a := -5*3;
+13:         b := -100/8;
+14: end
+15: end arithmetic4
+
+|--------------------------------|
+|  There is no syntactic error!  |
+|--------------------------------|

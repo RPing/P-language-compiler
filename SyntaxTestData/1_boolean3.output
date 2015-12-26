@@ -1,0 +1,24 @@
+1: /**
+2:  * boolean3.p: and or not
+3:  */
+4: //&T-
+5: 
+6: boolean3;
+7: 
+8: begin
+9:         var a, b: boolean;
+10:         var c: boolean;
+11: 
+12:         a := true;
+13:         b := false;
+14: 
+15:         c := not a and b;
+16:         c := not b and false;
+17:         c := a or true;
+18:         c := a and ( not b ) or true and (not false);
+19: end
+20: end boolean3
+
+|--------------------------------|
+|  There is no syntactic error!  |
+|--------------------------------|

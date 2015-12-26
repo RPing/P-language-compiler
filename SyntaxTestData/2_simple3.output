@@ -1,0 +1,15 @@
+1: //&T-
+2: //test read
+3: simple3;
+4: begin
+5:     var a : integer;
+6:     a := 1;
+7:     read a;
+8:     a := a * 3 / 3 + 4;
+9:     read a;
+10: end
+11: end simple3
+
+|--------------------------------|
+|  There is no syntactic error!  |
+|--------------------------------|

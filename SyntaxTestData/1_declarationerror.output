@@ -1,0 +1,16 @@
+1: //&T-
+2: //in declarationerror function, array is error in declaration
+3: declarationerror;
+4:     func () : integer;
+5:     begin
+6:     end
+7:     end func
+8: begin
+9:     var b : integer;
+10:     var a : real;
+
+|--------------------------------------------------------------------------
+| Error found in Line #11:     var c : array 0 to 5 of integer 0
+|
+| Unmatched token: 0
+|--------------------------------------------------------------------------

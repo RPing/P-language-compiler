@@ -1,0 +1,27 @@
+1: /*
+2:  * Local_2
+3:  *
+4:  */
+5: //&T-
+6: local2;
+7: 
+8: var a: integer;
+9: 
+10: 
+11: fun():integer;
+12: begin
+13:     return 10;
+14: end
+15: end fun
+16: 
+17: begin
+18:     var b, c: boolean;
+19:     var d : string;
+20:     //var e : array 1 to 10 of integer;
+21: end
+22: end local2
+23: 
+
+|--------------------------------|
+|  There is no syntactic error!  |
+|--------------------------------|

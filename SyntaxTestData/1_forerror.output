@@ -1,0 +1,20 @@
+1: //&T-
+2: //while loop loses two keywords
+3: forerror;
+4:     func () : integer;
+5:     begin
+6:     end
+7:     end func
+8: begin
+9:     var b : integer;
+10:     var a : boolean;
+11:     while a do
+12:     for b := 0 to 10 do
+13:     end do         
+14: end                       //lose do and lose end
+
+|--------------------------------------------------------------------------
+| Error found in Line #15: end
+|
+| Unmatched token: end
+|--------------------------------------------------------------------------

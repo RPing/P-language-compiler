@@ -1,0 +1,29 @@
+1: /*
+2:  * Program_total8 
+3:  *
+4:  */
+5: //&T-
+6: total8;
+7: 
+8: var b, c: boolean;
+9: 
+10: 
+11: fun():integer;
+12: begin
+13:     var e : array 1 to 10 of integer;
+14:     return 10;
+15: end
+16: end fun
+17: 
+18: begin
+19:     
+20:     var d : integer;
+21:     
+22: end
+23: 
+24: end total8
+25: 
+
+|--------------------------------|
+|  There is no syntactic error!  |
+|--------------------------------|

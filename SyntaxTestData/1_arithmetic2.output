@@ -1,0 +1,25 @@
+1: /**
+2:  * arithmetic2.p: arithmetic expressions, real
+3:  */
+4: 
+5: //&T-
+6: 
+7: arithmetic2;
+8: 
+9: begin
+10: 
+11:         var a, b : real;
+12: 
+13:         a := 1.0+1.0;
+14:         a := a+a;
+15:         a := a-3*15E-1;
+16:         b := a*11.3;
+17:         b := a/b;
+18:         a := b/3.1415926;
+19:         b := b - 14.52;
+20: end
+21: end arithmetic2
+
+|--------------------------------|
+|  There is no syntactic error!  |
+|--------------------------------|
