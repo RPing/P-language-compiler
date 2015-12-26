@@ -62,9 +62,6 @@ typedef struct e{
     typeStruct_t type;
     symbol_attribute attr;
     struct e* next;
-    // int option;
-    // bool isDeclare;
-    // bool isMatch;
 } symbol_table_entry;
 
 typedef struct {
@@ -77,8 +74,6 @@ typedef struct {
 typedef struct{
     symbol_table table[MAX_TABLE];
     int top;
-    // int level;
-    // int pretend;
 } table_stack;
 
 void init_table(symbol_table* p_table, int level);
