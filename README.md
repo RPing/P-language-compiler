@@ -1,3 +1,4 @@
 # P-language-compiler
-Fall 2015 Introduction to Compiler Design
+Introduction to Compiler Design Fall 2015 
+
 A pascal-like compiler which generates Java bytecode.
