@@ -10,6 +10,8 @@
 #define tokenString(t, s)  {LIST; if (Opt_T) printf("<%s: %s>\n", #t, (s));}
 #define MAX_LINE_LENG      256
 
+extern FILE *asm_file;
+
 int Opt_S = 1;
 int Opt_T = 1;
 int Opt_D = 1;
@@ -117,6 +119,7 @@ while   { token(KWwhile); return WHILE; }
             LIST;
             if (Opt_S)
                 printf("%d: %s", linenum, buf);
+            fprintf(asm_file, "; Line #%d: %s", linenum, buf);
             linenum++;
             buf[0] = '\0';
         }

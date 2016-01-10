@@ -16,4 +16,4 @@ y.tab.c: yacctemplate.y
 	$(YACC) yacctemplate.y
 
 clean:
-	rm -f $(TARGET) $(OBJECT)
+	rm -f $(TARGET) $(OBJECT) *.j *.class

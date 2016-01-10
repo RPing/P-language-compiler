@@ -10,13 +10,14 @@ void init_table(symbol_table* p_table, int level){
     p_table->level = level;
 }
 
-void insert_table(symbol_table* p_table, char* n, int k, typeStruct_t* t, symbol_attribute* a){
+void insert_table(symbol_table* p_table, char* n, int k, typeStruct_t* t, symbol_attribute* a, int num){
     symbol_table_entry* p_tmp;
     symbol_table_entry* p_entry = malloc(sizeof(symbol_table_entry));
     strncpy(p_entry->name, n, 32);
     p_entry->kind = k;
     p_entry->type = *t;
     p_entry->attr = *a;
+    p_entry->number = num;
     p_entry->next = NULL;
     if (p_tmp = p_table->end)
         p_table->end = p_tmp->next = p_entry;
@@ -121,13 +122,13 @@ void dump_symbol_table(symbol_table* table){
     printf("\n");
 }
 
-void push_table(table_stack* p_stack, int scope_type){
+void push_table(table_stack* p_stack, int scope_type){ /* scope_type is to identify a for loop scope */
     int level;
     symbol_table* p_new = &p_stack->table[p_stack->top+1];
     if (p_stack->top == -1) /* stack empty */
         level = 0;
     else
-        level = p_stack->table[p_stack->top].level+1; // level of the top table ////////////
+        level = p_stack->table[p_stack->top].level+1;
     init_table(p_new, level);
     p_new->scope_type = scope_type;
     p_stack->top += 1;

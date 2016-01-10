@@ -16,11 +16,14 @@ int i, j, k;
 char tmp_buf[256];
 int tmp_retype; /* workaround for RETURN statement(v_type) */
 bool have_return; /* workaround for RETURN statement(if def has return value, but no return value in body) */
+int var_num = 0; /* to store the next local variable number */
 table_stack stack;
 typeStruct_t tmp_t;
 symbol_attribute tmp_a;
 typeList_t tmp_l;
 symbol_table_entry *tmp_e;
+
+FILE *asm_file;
 
 void error(const char *msg){
     have_smerror = true;
@@ -34,7 +37,7 @@ void push_program(char *name){
     tmp_t.dim = 0;
     tmp_t.is_const = true;
     push_table(&stack, 0);
-    insert_table(&stack.table[stack.top], name, K_PROGRAM, &tmp_t, &tmp_a);
+    insert_table(&stack.table[stack.top], name, K_PROGRAM, &tmp_t, &tmp_a, -1);
 }
 
 void push_function_and_parameter(char *name, typeList_t list, typeStruct_t type){
@@ -51,7 +54,7 @@ void push_function_and_parameter(char *name, typeList_t list, typeStruct_t type)
     tmp_t.v_type = type.v_type;
     tmp_t.is_const = true;
     tmp_a.param_list = list;
-    insert_table(&stack.table[stack.top], name, K_FUNCTION, &tmp_t, &tmp_a);
+    insert_table(&stack.table[stack.top], name, K_FUNCTION, &tmp_t, &tmp_a, -1);
     /* parameter */
     push_table(&stack, 0);
     for (i = 0; i <= list.end; i++) {
@@ -64,7 +67,8 @@ void push_function_and_parameter(char *name, typeList_t list, typeStruct_t type)
                 tmp_t.dims[j] = list.argument_type[i].dims[j];
         }
         tmp_t.is_const = false;
-        insert_table(&stack.table[stack.top], list.argument_name[i], K_PARAMETER, &tmp_t, &tmp_a);
+        insert_table(&stack.table[stack.top], list.argument_name[i], K_PARAMETER, &tmp_t, &tmp_a, var_num);
+        var_num++;
     }
 }
 
@@ -73,7 +77,7 @@ void push_for_loop(char *name){
     tmp_t.dim = 0;
     tmp_t.is_const = true;
     push_table(&stack, 1);
-    insert_table(&stack.table[stack.top], name, K_VARIABLE, &tmp_t, &tmp_a);
+    insert_table(&stack.table[stack.top], name, K_VARIABLE, &tmp_t, &tmp_a, -1);
 }
 
 void check_func_def_return(typeStruct_t *p_type){
@@ -111,6 +115,13 @@ symbol_table_entry *check_id_all_scope(char *id){
             break;
     }
     return tmp_ent;
+}
+
+bool is_global(){
+    if (stack.top == 0)
+        return true;
+    else
+        return false;
 }
 
 %}
@@ -198,6 +209,9 @@ program	: programname{
             if(strcmp($1, filename))
                 error("program beginning ID inconsist with file name");
             push_program($1);
+            fprintf(asm_file, "; %s.j\n", filename);
+            fprintf(asm_file, ".class public %s\n", filename);
+            fprintf(asm_file, ".super java/lang/Object\n\n");
         } SEMICOLON programbody END IDENT{
             if(strcmp($1, $6))
                 error("program end ID inconsist with the beginning ID");
@@ -213,7 +227,14 @@ programname	: identifier {$$ = $1;}
 identifier : IDENT {$$ = $1;}
 		   ;
 
-programbody : varconst_declaration function_declaration compound_statement;
+programbody : varconst_declaration function_declaration {
+                fprintf(asm_file, ".method public static main([Ljava/lang/String;)V\n");
+                // fprintf(asm_file, ".limit stack 15\n");
+                var_num = 1;
+            }compound_statement{
+                fprintf(asm_file, "return\n");
+                fprintf(asm_file, ".end method\n");
+            };
 
 function_declaration : function_declaration IDENT L_PAREN parameter_list R_PAREN COLON type{
                         have_return = false;
@@ -226,6 +247,7 @@ function_declaration : function_declaration IDENT L_PAREN parameter_list R_PAREN
                         if (strcmp($2, $15))
                             error("the end of the functionName mismatch");
                         pop_table(&stack);
+                        var_num = 0;
                     }
                     | function_declaration IDENT L_PAREN parameter_list R_PAREN{
                         have_return = true;
@@ -236,6 +258,7 @@ function_declaration : function_declaration IDENT L_PAREN parameter_list R_PAREN
                         if (strcmp($2, $13))
                             error("the end of the functionName mismatch");
                         pop_table(&stack);
+                        var_num = 0;
                     }
                     | function_declaration IDENT L_PAREN R_PAREN COLON type{
                         have_return = false;
@@ -249,6 +272,7 @@ function_declaration : function_declaration IDENT L_PAREN parameter_list R_PAREN
                         if (strcmp($2, $14))
                             error("the end of the functionName mismatch");
                         pop_table(&stack);
+                        var_num = 0;
                     }
                     | function_declaration IDENT L_PAREN R_PAREN{
                         have_return = true;
@@ -260,6 +284,7 @@ function_declaration : function_declaration IDENT L_PAREN parameter_list R_PAREN
                         if (strcmp($2, $12))
                             error("the end of the functionName mismatch");
                         pop_table(&stack);
+                        var_num = 0;
                     }
                     | IDENT L_PAREN parameter_list R_PAREN COLON type{
                         have_return = false;
@@ -272,6 +297,7 @@ function_declaration : function_declaration IDENT L_PAREN parameter_list R_PAREN
                         if (strcmp($1, $14))
                             error("the end of the functionName mismatch");
                         pop_table(&stack);
+                        var_num = 0;
                     }
                     | IDENT L_PAREN parameter_list R_PAREN{
                         have_return = true;
@@ -282,6 +308,7 @@ function_declaration : function_declaration IDENT L_PAREN parameter_list R_PAREN
                         if (strcmp($1, $12))
                             error("the end of the functionName mismatch");
                         pop_table(&stack);
+                        var_num = 0;
                     }
                     | IDENT L_PAREN R_PAREN COLON type{
                         have_return = false;
@@ -295,6 +322,7 @@ function_declaration : function_declaration IDENT L_PAREN parameter_list R_PAREN
                         if (strcmp($1, $13))
                             error("the end of the functionName mismatch");
                         pop_table(&stack);
+                        var_num = 0;
                     }
                     | IDENT L_PAREN R_PAREN{
                         have_return = true;
@@ -306,6 +334,7 @@ function_declaration : function_declaration IDENT L_PAREN parameter_list R_PAREN
                         if (strcmp($1, $11))
                             error("the end of the functionName mismatch");
                         pop_table(&stack);
+                        var_num = 0;
                     }
                     |
                      ;
@@ -363,7 +392,24 @@ varconst_declaration : varconst_declaration VAR identifier_list COLON type SEMIC
                         for (i = 0; i <= $3.end ; i++) {
                             if (check_var_redeclare($3.argument_name[i])){
                                 $5.is_const = false;
-                                insert_table(&stack.table[stack.top], $3.argument_name[i], K_VARIABLE, &$5, &tmp_a);
+                                if (is_global()) {
+                                    switch($5.v_type){
+                                    case T_INTEGER:
+                                        fprintf(asm_file, ".field public static %s I\n", $3.argument_name[i]);
+                                        break;
+                                    case T_REAL:
+                                        fprintf(asm_file, ".field public static %s F\n", $3.argument_name[i]);
+                                        break;
+                                    case T_BOOLEAN:
+                                        fprintf(asm_file, ".field public static %s Z\n", $3.argument_name[i]);
+                                        break;
+                                    default:
+                                        error("NO STRING VARIABLE AND OTHER TYPE");
+                                    }
+                                } else {
+                                    insert_table(&stack.table[stack.top], $3.argument_name[i], K_VARIABLE, &$5, &tmp_a, var_num);
+                                    var_num++;
+                                }
                             }
                         }
                     }
@@ -387,7 +433,7 @@ varconst_declaration : varconst_declaration VAR identifier_list COLON type SEMIC
                                     error("[DEBUG 1] SOME BUG...");
                                 }
                                 $5.is_const = true;
-                                insert_table(&stack.table[stack.top], $3.argument_name[i], K_CONSTANT, &$5, &tmp_a);
+                                insert_table(&stack.table[stack.top], $3.argument_name[i], K_CONSTANT, &$5, &tmp_a, -1);
                             }
                         }
                      }
@@ -395,7 +441,24 @@ varconst_declaration : varconst_declaration VAR identifier_list COLON type SEMIC
                         for (i = 0; i <= $2.end ; i++) {
                             if (check_var_redeclare($2.argument_name[i])){
                                 $4.is_const = false;
-                                insert_table(&stack.table[stack.top], $2.argument_name[i], K_VARIABLE, &$4, &tmp_a);
+                                if (is_global()) {
+                                    switch($4.v_type){
+                                    case T_INTEGER:
+                                        fprintf(asm_file, ".field public static %s I\n", $2.argument_name[i]);
+                                        break;
+                                    case T_REAL:
+                                        fprintf(asm_file, ".field public static %s F\n", $2.argument_name[i]);
+                                        break;
+                                    case T_BOOLEAN:
+                                        fprintf(asm_file, ".field public static %s Z\n", $2.argument_name[i]);
+                                        break;
+                                    default:
+                                        error("NO STRING VARIABLE AND OTHER TYPE");
+                                    }
+                                } else {
+                                    insert_table(&stack.table[stack.top], $2.argument_name[i], K_VARIABLE, &$4, &tmp_a, var_num);
+                                    var_num++;
+                                }
                             }
                         }
                      }
@@ -419,7 +482,7 @@ varconst_declaration : varconst_declaration VAR identifier_list COLON type SEMIC
                                     error("[DEBUG 1] SOME BUG...");
                                 }
                                 $4.is_const = true;
-                                insert_table(&stack.table[stack.top], $2.argument_name[i], K_CONSTANT, &$4, &tmp_a);
+                                insert_table(&stack.table[stack.top], $2.argument_name[i], K_CONSTANT, &$4, &tmp_a, -1);
                             }
                         }
                      }
@@ -852,6 +915,10 @@ int  main( int argc, char **argv )
     filename = strdup(argv[1]);
     char *dot = strchr(filename, '.');
     if(dot) *dot = '\0';
+
+    char asm_name[MAX_STRING_SIZE];
+    snprintf(asm_name, MAX_STRING_SIZE, "%s.j", filename);
+    asm_file = fopen( asm_name, "w" );
 
 	FILE *fp = fopen( argv[1], "r" );
 

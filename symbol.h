@@ -61,6 +61,7 @@ typedef struct e{
     int kind;
     typeStruct_t type;
     symbol_attribute attr;
+    int number;
     struct e* next;
 } symbol_table_entry;
 
@@ -77,7 +78,7 @@ typedef struct{
 } table_stack;
 
 void init_table(symbol_table* p_table, int level);
-void insert_table(symbol_table* p_table, char* n, int k, typeStruct_t* t, symbol_attribute* a);
+void insert_table(symbol_table* p_table, char* n, int k, typeStruct_t* t, symbol_attribute* a, int num);
 symbol_table_entry* lookup_table(symbol_table* p_table, char* n);
 void generate_constant_attr_string(char* buf, symbol_table_entry* p_entry);
 void generate_function_attr_atring(char* buf, symbol_table_entry* p_entry);
