@@ -31,11 +31,18 @@
 #define exchange(x,y) {(x)^=(y); (y)^=(x); (x)^=(y);}
 
 typedef struct {
+    int if_count;
+    int while_count;
+    int for_count;
+} statement_c;
+
+typedef struct {
     int v_type;
     int dim; /* dim is 0 means non-array; dim > 0 means array. */
     int dims[MAX_DIM];
 
     bool is_const;
+    bool is_reference;
     int val;
     bool bval;
     float rval;
@@ -47,6 +54,13 @@ typedef struct {
     typeStruct_t argument_type[MAX_PARAM];
     char* argument_name[MAX_PARAM];
 } typeList_t;
+
+typedef struct {
+    int end;
+    typeStruct_t argument_type[MAX_PARAM];
+    char* argument_name[MAX_PARAM];
+    char* asm_buf[MAX_PARAM];
+} param_l;
 
 typedef union {
     int integer_val;
@@ -62,14 +76,16 @@ typedef struct e{
     typeStruct_t type;
     symbol_attribute attr;
     int number;
+    int level; /* the same as level in symbol_table */
     struct e* next;
+    char asm_buf[MAX_STRING_SIZE];
 } symbol_table_entry;
 
 typedef struct {
     symbol_table_entry* entry;
     symbol_table_entry* end;
-    int level;  //0: global 1~: local
-    int scope_type;  //1 if for scope else 0. workaround for nested for loop(need id unique)
+    int level;  /* 0: global 1~: local */
+    int scope_type;  /* 1 if for scope else 0. workaround for nested for loop(need id unique) */
 } symbol_table;
 
 typedef struct{
@@ -80,6 +96,7 @@ typedef struct{
 void init_table(symbol_table* p_table, int level);
 void insert_table(symbol_table* p_table, char* n, int k, typeStruct_t* t, symbol_attribute* a, int num);
 symbol_table_entry* lookup_table(symbol_table* p_table, char* n);
+void put_attr(table_stack* stack, int top, char* name, symbol_table_entry* right_val_entry, bool coercion);
 void generate_constant_attr_string(char* buf, symbol_table_entry* p_entry);
 void generate_function_attr_atring(char* buf, symbol_table_entry* p_entry);
 void generate_type_string(char* buf, typeStruct_t type);

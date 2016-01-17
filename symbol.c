@@ -18,6 +18,7 @@ void insert_table(symbol_table* p_table, char* n, int k, typeStruct_t* t, symbol
     p_entry->type = *t;
     p_entry->attr = *a;
     p_entry->number = num;
+    p_entry->level = p_table->level;
     p_entry->next = NULL;
     if (p_tmp = p_table->end)
         p_table->end = p_tmp->next = p_entry;
@@ -32,6 +33,33 @@ symbol_table_entry* lookup_table(symbol_table* p_table, char* n){
             break;
     }
     return p_tmp;
+}
+
+void put_attr(table_stack* stack, int top, char* name, symbol_table_entry* right_val_entry, bool coercion){ /* for assignment */
+    symbol_table_entry *tmp_ent;
+    int i;
+    float temp;
+    for (i = top; i >= 0; i--) {
+        if (tmp_ent = lookup_table(&stack->table[i], name))
+            break;
+    }
+
+    if (coercion)
+        temp = right_val_entry->type.val;
+    else
+        temp = right_val_entry->type.rval;
+
+    switch(tmp_ent->type.v_type){
+    case T_INTEGER:
+        tmp_ent->attr.integer_val = right_val_entry->type.val;
+        break;
+    case T_REAL:
+        tmp_ent->attr.real_val = temp;
+        break;
+    case T_BOOLEAN:
+        tmp_ent->attr.boolean_val = right_val_entry->type.bval;
+        break;
+    }
 }
 
 void generate_constant_attr_string(char* buf, symbol_table_entry* p_entry){
