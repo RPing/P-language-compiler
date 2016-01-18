@@ -57,6 +57,7 @@ typedef struct {
 
 typedef struct {
     int end;
+    int kind;
     typeStruct_t argument_type[MAX_PARAM];
     char* argument_name[MAX_PARAM];
     char* asm_buf[MAX_PARAM];

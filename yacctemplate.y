@@ -179,7 +179,7 @@ void asm_function_head(char *name, typeList_t *param, typeStruct_t *re, bool par
     }
 
     fprintf(asm_file, ".limit stack 15\n");
-    fprintf(asm_file, ".limit locals %d\n", param->end + 1);
+    fprintf(asm_file, ".limit locals 20\n");
 }
 
 void asm_id_reference(symbol_table_entry *tmp_e, symbol_table_entry *code){
@@ -319,7 +319,7 @@ void asm_literal_constant(symbol_table_entry *tmp_e, symbol_table_entry *code){
 
 }
 
-void asm_assignment_store(symbol_table_entry *tmp_e){
+void asm_store(symbol_table_entry *tmp_e){
     if (is_global(tmp_e->level)) {
         switch(tmp_e->type.v_type){
         case T_INTEGER:
@@ -351,7 +351,8 @@ void asm_assignment_store(symbol_table_entry *tmp_e){
 
 %}
 
-/* %code requires {
+/* in the begining of the development, these lines should be used.
+%code requires {
 //     #include "symbol.h"
  }*/
 
@@ -825,17 +826,14 @@ simple_statement : variable_reference ASSIGN_OP expression SEMICOLON{
                             /* coercion */
                             if (!$3.type.is_reference) {
                                 if ($3.type.is_const) {
-                                    $3.type.v_type = T_REAL;
-                                    $3.type.rval = $3.type.val;
                                     asm_literal_constant(&$3, &$3);
                                 } else {
-                                    $3.type.v_type = T_REAL;
-                                    $3.type.rval = $3.type.val;
                                     asm_id_reference(&$3, &$3);
                                 }
                             }
                             fprintf(asm_file, "%s", $3.asm_buf);
-                            asm_assignment_store(&$1);
+                            fprintf(asm_file, "i2f\n");
+                            asm_store(&$1);
                             put_attr(&stack, stack.top, $1.name, &$3, true);
                         } else {
                             error("type mismatch in assignment");
@@ -848,7 +846,7 @@ simple_statement : variable_reference ASSIGN_OP expression SEMICOLON{
                                 asm_id_reference(&$3, &$3);
                         }
                         fprintf(asm_file, "%s", $3.asm_buf);
-                        asm_assignment_store(&$1);
+                        asm_store(&$1);
                         put_attr(&stack, stack.top, $1.name, &$3, false);
                     }
                  }
@@ -859,23 +857,21 @@ simple_statement : variable_reference ASSIGN_OP expression SEMICOLON{
                     if ($2.type.is_const){
                         error("the variable(constant) should not change");
                     } else {
-                        fprintf(asm_file, "getstatic test/_sc Ljava/util/Scanner;\n");
+                        fprintf(asm_file, "getstatic %s/_sc Ljava/util/Scanner;\n", filename);
                         switch($2.type.v_type){
                         case T_INTEGER:
                             fprintf(asm_file, "invokevirtual java/util/Scanner/nextInt()I\n");
-                            fprintf(asm_file, "istore %d\n", $2.number);
                             break;
                         case T_BOOLEAN:
                             fprintf(asm_file, "invokevirtual java/util/Scanner/nextBoolean()Z\n");
-                            fprintf(asm_file, "istore %d\n", $2.number);
                             break;
                         case T_REAL:
                             fprintf(asm_file, "invokevirtual java/util/Scanner/nextFloat()F\n");
-                            fprintf(asm_file, "fstore %d\n", $2.number);
                             break;
                         default:
                             error("STRING OR OTHER TYPE CANNOT BE READ");
                         }
+                        asm_store(&$2);
                     }
                  }
                  ;
@@ -890,24 +886,6 @@ print_post_statement : expression SEMICOLON{
                         }
                         fprintf(asm_file, "%s", $1.asm_buf);
 
-                        switch($1.type.v_type){
-                        case T_INTEGER:
-                            fprintf(asm_file, "invokevirtual java/io/PrintStream/print(I)V\n");
-                            break;
-                        case T_BOOLEAN:
-                            fprintf(asm_file, "invokevirtual java/io/PrintStream/print(Z)V\n");
-                            break;
-                        case T_REAL:
-                            fprintf(asm_file, "invokevirtual java/io/PrintStream/print(F)V\n");
-                            break;
-                        case T_STRING:
-                            fprintf(asm_file, "invokevirtual java/io/PrintStream/print(Ljava/lang/String;)V\n");
-                            break;
-                        default:
-                            error("ILLEGAL TYPE");
-                        }
-                     }
-                     | function_invoke_statement SEMICOLON{
                         switch($1.type.v_type){
                         case T_INTEGER:
                             fprintf(asm_file, "invokevirtual java/io/PrintStream/print(I)V\n");
@@ -1022,10 +1000,23 @@ return_statement : RETURN expression SEMICOLON{
                     }
                     fprintf(asm_file, "%s", $2.asm_buf);
 
-                    if ($2.type.v_type != tmp_retype)
+                    if ($2.type.v_type != tmp_retype){
                         error("return type mismatch");
-                    else
-                        fprintf(asm_file, "ireturn\n");
+                    } else {
+                        switch($2.type.v_type){
+                        case T_INTEGER:
+                            fprintf(asm_file, "ireturn\n");
+                            break;
+                        case T_REAL:
+                            fprintf(asm_file, "freturn\n");
+                            break;
+                        case T_BOOLEAN:
+                            fprintf(asm_file, "ireturn\n");
+                            break;
+                        default:
+                            error("CANNOT SUPPORT SUCH A RETURN TYPE");
+                        }
+                    }
                     have_return = true;
                  }
                  ;
@@ -1049,7 +1040,53 @@ function_invoke_statement : IDENT L_PAREN logical_expression_list R_PAREN{
                                                 if ((tmp_e->attr.param_list.argument_type[j].v_type == T_REAL) &&
                                                     ($3.argument_type[j].v_type == T_INTEGER)) {
                                                     /* coercion */
+                                                    if ($3.kind == K_VARIABLE || $3.kind == K_PARAMETER) {
+                                                        tmp_param_e = check_id_all_scope($3.argument_name[j]);
+                                                    } else {
+                                                        tmp_param_e = malloc(sizeof(symbol_table_entry));
+                                                        strcpy(tmp_param_e->name, $3.argument_name[j]);
+                                                        memcpy(&tmp_param_e->type, &$3.argument_type[j], sizeof(typeStruct_t));
+                                                    }
+
+                                                    if (tmp_e->type.v_type == T_VOID) {
+                                                        if (!$3.argument_type[j].is_reference) {
+                                                            symbol_table_entry *t = NULL;
+                                                            if ($3.argument_type[j].is_const) {
+                                                                asm_literal_constant(tmp_param_e, t);
+                                                            } else {
+                                                                asm_id_reference(tmp_param_e, t);
+                                                            }
+                                                        } else {
+                                                            fprintf(asm_file, "%s", $3.asm_buf[j]);
+                                                        }
+                                                        fprintf(asm_file, "i2f\n");
+                                                    } else {
+                                                        if (!$3.argument_type[j].is_reference) {
+                                                            if ($3.argument_type[j].is_const) {
+                                                                asm_literal_constant(tmp_param_e, &$$);
+                                                            } else {
+                                                                asm_id_reference(tmp_param_e, &$$);
+                                                            }
+                                                        } else {
+                                                            strcat($$.asm_buf, $3.asm_buf[j]);
+                                                        }
+                                                        strcat($$.asm_buf, "i2f\n");
+                                                    }
+                                                } else {
+                                                    error("parameter type mismatch");
+                                                    // break;
+                                                }
+                                            } else {
+                                                /* consistent */
+                                                if ($3.kind == K_VARIABLE || $3.kind == K_PARAMETER) {
                                                     tmp_param_e = check_id_all_scope($3.argument_name[j]);
+                                                } else {
+                                                    tmp_param_e = malloc(sizeof(symbol_table_entry));
+                                                    strcpy(tmp_param_e->name, $3.argument_name[j]);
+                                                    memcpy(&tmp_param_e->type, &$3.argument_type[j], sizeof(typeStruct_t));
+                                                }
+
+                                                if (tmp_e->type.v_type == T_VOID) {
                                                     if (!$3.argument_type[j].is_reference) {
                                                         symbol_table_entry *t = NULL;
                                                         if ($3.argument_type[j].is_const) {
@@ -1060,58 +1097,71 @@ function_invoke_statement : IDENT L_PAREN logical_expression_list R_PAREN{
                                                     } else {
                                                         fprintf(asm_file, "%s", $3.asm_buf[j]);
                                                     }
-                                                    fprintf(asm_file, "i2f\n");
                                                 } else {
-                                                    error("parameter type mismatch");
-                                                    // break;
-                                                }
-                                            } else {
-                                                /* consistent */
-                                                tmp_param_e = check_id_all_scope($3.argument_name[j]);
-                                                if (!$3.argument_type[j].is_reference) {
-                                                    symbol_table_entry *t = NULL;
-                                                    if ($3.argument_type[j].is_const) {
-                                                        asm_literal_constant(tmp_param_e, t);
+                                                    if (!$3.argument_type[j].is_reference) {
+                                                        if ($3.argument_type[j].is_const) {
+                                                            asm_literal_constant(tmp_param_e, &$$);
+                                                        } else {
+                                                            asm_id_reference(tmp_param_e, &$$);
+                                                        }
                                                     } else {
-                                                        asm_id_reference(tmp_param_e, t);
+                                                        strcat($$.asm_buf, $3.asm_buf[j]);
                                                     }
-                                                } else {
-                                                    fprintf(asm_file, "%s", $3.asm_buf[j]);
+                                                    // printf("---\n%s\n---\n", $$.asm_buf);
                                                 }
                                             }
                                         }
-                                        fprintf(asm_file, "invokestatic %s/%s(", filename, $1);
-                                        for (j = 0; j <= tmp_e->attr.param_list.end; j++) {
-                                            switch(tmp_e->attr.param_list.argument_type[j].v_type){
+                                        if (tmp_e->type.v_type == T_VOID) {
+                                            fprintf(asm_file, "invokestatic %s/%s(", filename, $1);
+                                            for (j = 0; j <= tmp_e->attr.param_list.end; j++) {
+                                                switch(tmp_e->attr.param_list.argument_type[j].v_type){
+                                                case T_INTEGER:
+                                                    fprintf(asm_file, "I");
+                                                    break;
+                                                case T_BOOLEAN:
+                                                    fprintf(asm_file, "Z");
+                                                    break;
+                                                case T_REAL:
+                                                    fprintf(asm_file, "F");
+                                                    break;
+                                                }
+                                            }
+                                            fprintf(asm_file, ")V\n");
+                                        } else {
+                                            char t[100];
+                                            sprintf(t, "invokestatic %s/%s(", filename, $1);
+                                            strcat($$.asm_buf, t);
+                                            for (j = 0; j <= tmp_e->attr.param_list.end; j++) {
+                                                switch(tmp_e->attr.param_list.argument_type[j].v_type){
+                                                case T_INTEGER:
+                                                    strcat($$.asm_buf, "I");
+                                                    break;
+                                                case T_BOOLEAN:
+                                                    strcat($$.asm_buf, "Z");
+                                                    break;
+                                                case T_REAL:
+                                                    strcat($$.asm_buf, "F");
+                                                    break;
+                                                }
+                                            }
+                                            switch(tmp_e->type.v_type){
                                             case T_INTEGER:
-                                                fprintf(asm_file, "I");
+                                                strcat($$.asm_buf, ")I\n");
                                                 break;
                                             case T_BOOLEAN:
-                                                fprintf(asm_file, "Z");
+                                                strcat($$.asm_buf, ")Z\n");
                                                 break;
                                             case T_REAL:
-                                                fprintf(asm_file, "F");
+                                                strcat($$.asm_buf, ")F\n");
                                                 break;
                                             }
-                                        }
-                                        switch(tmp_e->type.v_type){
-                                        case T_VOID:
-                                            fprintf(asm_file, ")V\n");
-                                            break;
-                                        case T_INTEGER:
-                                            fprintf(asm_file, ")I\n");
-                                            break;
-                                        case T_BOOLEAN:
-                                            fprintf(asm_file, ")Z\n");
-                                            break;
-                                        case T_REAL:
-                                            fprintf(asm_file, ")F\n");
-                                            break;
                                         }
                                         $$.type.v_type = tmp_e->type.v_type;
                                         $$.type.dim = 0;
                                         $$.type.is_reference = true;
+                                        $$.kind = $3.kind;
                                     }
+                                    sprintf($$.name, "%s", $1);
                                 }
                           }
                           | IDENT L_PAREN R_PAREN{
@@ -1124,25 +1174,31 @@ function_invoke_statement : IDENT L_PAREN logical_expression_list R_PAREN{
                                         sprintf(tmp_buf, "too few arguments to function '%s'", $1);
                                         error(tmp_buf);
                                     } else {
+                                        char t[100];
                                         switch(tmp_e->type.v_type){
                                         case T_VOID:
                                             fprintf(asm_file, "invokestatic %s/%s()V\n", filename, $1);
                                             break;
                                         case T_INTEGER:
-                                            fprintf(asm_file, "invokestatic %s/%s()I\n", filename, $1);
+                                            sprintf(t, "invokestatic %s/%s()I\n", filename, $1);
+                                            strcat($$.asm_buf, t);
                                             break;
                                         case T_BOOLEAN:
-                                            fprintf(asm_file, "invokestatic %s/%s()Z\n", filename, $1);
+                                            sprintf(t, "invokestatic %s/%s()Z\n", filename, $1);
+                                            strcat($$.asm_buf, t);
                                             break;
                                         case T_REAL:
-                                            fprintf(asm_file, "invokestatic %s/%s()F\n", filename, $1);
+                                            sprintf(t, "invokestatic %s/%s()F\n", filename, $1);
+                                            strcat($$.asm_buf, t);
                                             break;
                                         }
                                         $$.type.v_type = tmp_e->type.v_type;
                                         $$.type.dim = 0;
                                         $$.type.is_reference = true;
+                                        $$.kind = K_FUNCTION;
                                     }
                                 }
+                                sprintf($$.name, "%s", $1);
                           }
                           ;
 
@@ -1325,6 +1381,8 @@ arithmetic_expression : arithmetic_expression ADD_OP term{
                                 ($3.type.v_type != T_INTEGER && $3.type.v_type != T_REAL)) {
                             if ($1.type.v_type == T_STRING && $3.type.v_type == T_STRING) {
                                 /* string concatenation */
+                                strcat($1.type.sval, $3.type.sval);
+                                strcpy($$.type.sval, $1.type.sval);
                                 $$.type.v_type = T_STRING;
                                 $$.type.dim = 0;
                             } else {
@@ -1573,9 +1631,9 @@ factor : literal_constant{
             $$ = $1;
             $$.type.dim = 0;
             $$.type.is_const = true;
-            $$.type.is_reference = false; // OK?
+            $$.type.is_reference = false;
         }
-       | variable_reference{$$ = $1; $$.type.is_reference = false;}// OK?
+       | variable_reference{$$ = $1; $$.type.is_reference = false;}
        | function_invoke_statement{$$ = $1;}
        | L_PAREN logical_expression R_PAREN{$$ = $2;}
        | SUB_OP factor{ /* print -a; will fall here */
@@ -1604,20 +1662,16 @@ factor : literal_constant{
        ;
 
 logical_expression_list : logical_expression_list COMMA logical_expression{
-                            $1.argument_type[++$1.end].v_type = $3.type.v_type;
-                            $1.argument_type[$1.end].dim = $3.type.dim;
-                            $1.argument_type[$1.end].is_reference = $3.type.is_reference;
-                            $1.argument_type[$1.end].is_const = $3.type.is_const;
+                            memcpy(&$1.argument_type[++$1.end], &$3.type, sizeof(typeStruct_t));
                             $1.argument_name[$1.end] = strdup($3.name);
                             $1.asm_buf[$1.end] = strdup($3.asm_buf);
+                            $1.kind = $3.kind;
                             memcpy(&$$, &$1, sizeof(typeList_t));
                         }
                         | logical_expression{
+                            memcpy(&$$.argument_type[0], &$1.type, sizeof(typeStruct_t));
                             $$.end = 0;
-                            $$.argument_type[0].v_type = $1.type.v_type;
-                            $$.argument_type[0].dim = $1.type.dim;
-                            $$.argument_type[0].is_reference = $1.type.is_reference;
-                            $$.argument_type[0].is_const = $1.type.is_const;
+                            $$.kind = $1.kind;
                             $$.argument_name[0] = strdup($1.name);
                             $$.asm_buf[0] = strdup($1.asm_buf);
                         }
