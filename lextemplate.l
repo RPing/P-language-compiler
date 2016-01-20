@@ -29,7 +29,7 @@ letter [a-zA-Z]
 %x STR
 %%
 
-"//&"[A-Z][+-]  {
+"//&"[STD][+-]  {
                     LIST;
                     switch (yytext[3]) {
                     case 'S':

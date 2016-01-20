@@ -192,7 +192,7 @@ void asm_id_reference(symbol_table_entry *tmp_e, symbol_table_entry *code){
                 sprintf(temp, "getstatic %s/%s I\n", filename, tmp_e->name);
                 break;
             case T_REAL:
-                sprintf(temp, "getstatic %s/%s R\n", filename, tmp_e->name);
+                sprintf(temp, "getstatic %s/%s F\n", filename, tmp_e->name);
                 break;
             default:
                 error("NO STRING VARIABLE AND OTHER TYPE");
@@ -238,7 +238,7 @@ void asm_id_reference(symbol_table_entry *tmp_e, symbol_table_entry *code){
                 fprintf(asm_file, "getstatic %s/%s I\n", filename, tmp_e->name);
                 break;
             case T_REAL:
-                fprintf(asm_file, "getstatic %s/%s R\n", filename, tmp_e->name);
+                fprintf(asm_file, "getstatic %s/%s F\n", filename, tmp_e->name);
                 break;
             default:
                 error("NO STRING VARIABLE AND OTHER TYPE");
@@ -906,7 +906,19 @@ print_post_statement : expression SEMICOLON{
                      ;
 
 conditional_statement : IF boolean_expr{
-                            fprintf(asm_file, "%s", $2.asm_buf);
+                            if (!$2.type.is_reference) {
+                                symbol_table_entry *t = NULL;
+                                if ($2.type.is_const)
+                                    asm_literal_constant(&$2, t);
+                                else
+                                    asm_id_reference(&$2, t);
+                                if ($2.type.is_const)
+                                    asm_literal_constant(&$2, t);
+                                else
+                                    asm_id_reference(&$2, t);
+                            } else {
+                                fprintf(asm_file, "%s", $2.asm_buf);
+                            }
                             if ($2.type.v_type != T_BOOLEAN)
                                 error("if statement's operand is not boolean type");
                             else
@@ -1328,7 +1340,10 @@ relation_expression : arithmetic_expression relation_operator arithmetic_express
                                     else
                                         asm_id_reference(&$3, &$$);
                                 }
-                                strcat($$.asm_buf, "isub\n");
+                                if ($1.type.v_type == T_INTEGER)
+                                    strcat($$.asm_buf, "isub\n");
+                                else
+                                    strcat($$.asm_buf, "fcmpl\n");
                             }
                             if (!strcmp($2, "<")){
                                 sprintf(tmp_buf, "iflt L%d\n", label_num);
