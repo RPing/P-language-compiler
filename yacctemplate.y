@@ -906,23 +906,24 @@ print_post_statement : expression SEMICOLON{
                      ;
 
 conditional_statement : IF boolean_expr{
-                            if (!$2.type.is_reference) {
-                                symbol_table_entry *t = NULL;
-                                if ($2.type.is_const)
-                                    asm_literal_constant(&$2, t);
-                                else
-                                    asm_id_reference(&$2, t);
-                                if ($2.type.is_const)
-                                    asm_literal_constant(&$2, t);
-                                else
-                                    asm_id_reference(&$2, t);
-                            } else {
-                                fprintf(asm_file, "%s", $2.asm_buf);
-                            }
                             if ($2.type.v_type != T_BOOLEAN)
                                 error("if statement's operand is not boolean type");
-                            else
+                            else{
+                                if (!$2.type.is_reference) {
+                                    symbol_table_entry *t = NULL;
+                                    if ($2.type.is_const)
+                                        asm_literal_constant(&$2, t);
+                                    else
+                                        asm_id_reference(&$2, t);
+                                    if ($2.type.is_const)
+                                        asm_literal_constant(&$2, t);
+                                    else
+                                        asm_id_reference(&$2, t);
+                                } else {
+                                    fprintf(asm_file, "%s", $2.asm_buf);
+                                }
                                 fprintf(asm_file, "ifeq Lfalse_if_%d\n", if_false_num);
+                            }
 
                       } then_continue
                       ;
@@ -1838,6 +1839,8 @@ int  main( int argc, char **argv )
 	yyin = fp;
 	yyparse();
 
+    fclose(asm_file);
+
     fprintf( stdout, "\n" );
     if (have_smerror) {
         fprintf( stdout, "|--------------------------------|\n" );
@@ -1847,6 +1850,19 @@ int  main( int argc, char **argv )
         fprintf( stdout, "|-------------------------------------------|\n" );
         fprintf( stdout, "| There is no syntactic and semantic error! |\n" );
         fprintf( stdout, "|-------------------------------------------|\n" );
+
+        char ins[100];
+        sprintf(ins, "java -jar jasmin.jar %s.j", filename);
+        FILE *class = popen(ins, "r");
+        if (!class) {
+            fprintf(stdout, "No class file generated.\n");
+        } else {
+            while(fgets(ins, 100, class)){
+                fprintf(stdout, "%s", ins);
+                ins[0] = '\0';
+            }
+            pclose(class);
+        }
     }
 
 	exit(0);
