@@ -1,0 +1,1962 @@
+=================================================================================================================================
+Pattern name: 
+SymbolTable/advanceSym.p
+  
+1: /*
+2:  * advance_sym.p : Advanced symbol table info. dump check
+3:  * You should pass this pattern
+4:  */
+5: //&T-
+6: //&P-
+7: advanceSym;
+8: var a : array 1 to 10 of integer;
+9: var aa : array 1 to 10 of boolean;
+10: var c : 123;   
+11: var d : "bye~";
+12: var e : true;
+13: 
+14: 
+15: // function with param, no return type
+16: fun2( a: array 1 to 10 of array 1 to 5 of integer ; c: integer);
+17: begin
+18:     var d : integer;
+19: 
+20:     begin
+21:         var a : string;
+================================================================================================================
+Name                             Kind       Level      Type                             Attribute               
+----------------------------------------------------------------------------------------------------------------
+a                                variable   2(local)  string                           
+================================================================================================================
+22:     end
+================================================================================================================
+Name                             Kind       Level      Type                             Attribute               
+----------------------------------------------------------------------------------------------------------------
+a                                parameter  1(local)  integer [10][5]                  
+c                                parameter  1(local)  integer                          
+d                                variable   1(local)  integer                          
+================================================================================================================
+23: end
+24: end fun2
+25: 
+26: 
+27: // main program
+28: begin
+29: 
+30:     var a : integer;
+31:     begin
+32:         var a : string;
+33:         begin
+34:             var a : integer;
+================================================================================================================
+Name                             Kind       Level      Type                             Attribute               
+----------------------------------------------------------------------------------------------------------------
+a                                variable   3(local)  integer                          
+================================================================================================================
+35:         end
+================================================================================================================
+Name                             Kind       Level      Type                             Attribute               
+----------------------------------------------------------------------------------------------------------------
+a                                variable   2(local)  string                           
+================================================================================================================
+36:     end
+37: 
+================================================================================================================
+Name                             Kind       Level      Type                             Attribute               
+----------------------------------------------------------------------------------------------------------------
+a                                variable   1(local)  integer                          
+================================================================================================================
+38: end
+================================================================================================================
+Name                             Kind       Level      Type                             Attribute               
+----------------------------------------------------------------------------------------------------------------
+advanceSym                       program    0(global) void                             
+a                                variable   0(global) integer [10]                     
+aa                               variable   0(global) boolean [10]                     
+c                                constant   0(global) integer                          123
+d                                constant   0(global) string                           bye~
+e                                constant   0(global) boolean                          true
+fun2                             function   0(global) void                             integer [10][5] , integer  , 
+================================================================================================================
+39: end advanceSym
+40: 
+=================================================================================================================================
+Pattern name: 
+SymbolTable/basicSym.p
+  
+1: /**
+2:  * basic_sym.p : basic symbol table info. dump check
+3:  */
+4: //&T-
+5: //&P-
+6: basicSym;
+7: 
+8: var a,b : integer;
+9: var c : boolean;
+10: var d : string;
+11: var r : real;
+12: 
+13: // function without param and return type
+14: fun();
+15: begin
+16: 
+================================================================================================================
+Name                             Kind       Level      Type                             Attribute               
+----------------------------------------------------------------------------------------------------------------
+================================================================================================================
+17: end 
+18: end fun
+19: 
+20: // function with return type, no param
+21: fun2() : boolean;
+22: begin
+23:     return true;
+================================================================================================================
+Name                             Kind       Level      Type                             Attribute               
+----------------------------------------------------------------------------------------------------------------
+================================================================================================================
+24: end
+25: end fun2
+26: 
+27: // main program
+28: begin
+29:    var aaa : integer;
+30:    var bbb : boolean;
+31:    var ccc : string;
+32:    var rrr : real;
+33:    var fff : 123;
+34:    var ggg : true;
+35:    var hhh : "hello\n";
+36:    var iii : 2.86;
+37:    // without statement
+================================================================================================================
+Name                             Kind       Level      Type                             Attribute               
+----------------------------------------------------------------------------------------------------------------
+aaa                              variable   1(local)  integer                          
+bbb                              variable   1(local)  boolean                          
+ccc                              variable   1(local)  string                           
+rrr                              variable   1(local)  real                             
+fff                              constant   1(local)  integer                          123
+ggg                              constant   1(local)  boolean                          true
+hhh                              constant   1(local)  string                           hello\n
+iii                              constant   1(local)  real                             2.860000
+================================================================================================================
+38: end
+================================================================================================================
+Name                             Kind       Level      Type                             Attribute               
+----------------------------------------------------------------------------------------------------------------
+basicSym                         program    0(global) void                             
+a                                variable   0(global) integer                          
+b                                variable   0(global) integer                          
+c                                variable   0(global) boolean                          
+d                                variable   0(global) string                           
+r                                variable   0(global) real                             
+fun                              function   0(global) void                             
+fun2                             function   0(global) boolean                          
+================================================================================================================
+39: end basicSym
+40: 
+=================================================================================================================================
+Pattern name: 
+Basic/Functionname.p
+  
+1: /*
+2:  *  Function name
+3:  */ 
+4: 
+5: //&P-
+6: //&D-
+7: //&T-
+8: Functionname;
+9: 
+10: 
+11: func(a:integer);
+12: begin
+13: 
+14: end
+15: end func               // ok
+16: 
+17: fun() : integer;
+18: begin
+19:     return 10;
+20: end
+########## Error at Line #21: the end of the functionName mismatch ########## 
+21: end funny              // error, fun != funny
+22: 
+23: fun1() : boolean; 
+24: begin
+25:     return true;
+26: end
+########## Error at Line #27: the end of the functionName mismatch ########## 
+27: end funny1              // error, fun1 != funny1
+28: 
+29: fun3() : integer;     
+30: begin
+31:     return 10;
+32: end
+########## Error at Line #33: the end of the functionName mismatch ########## 
+33: end fun2		// error, fun3 != fun2
+34:      
+35: 
+36: fun6();   // without return
+37: begin
+38: 
+39: end
+########## Error at Line #40: the end of the functionName mismatch ########## 
+40: end fun4                // error, fun6 != fun4
+41: 
+42: 
+43: // main program
+44: begin
+45:     // nothing
+46: end
+47: end Functionname  
+48: 
+=================================================================================================================================
+Pattern name: 
+Basic/profilname.p
+  
+1: /*
+2: check file name and program name
+3: */
+4: 
+5: //&P-
+6: //&T-
+7: //&D-
+8: 
+########## Error at Line#9: program beginning ID inconsist with file name ########## 
+9: profilnames;
+10: begin
+11: 
+12: 
+13: 
+14: end
+########## Error at Line#15: program end ID inconsist with file name ########## 
+15: end profilnames
+16: 
+=================================================================================================================================
+Pattern name: 
+SymbolDef/Array.p
+  
+1: /*
+2:  *  Array
+3:  */
+4: 
+5: //&T-
+6: //&P-
+7: //&D-
+8: Array;
+9: 
+10: 
+11: var a : array 1 to 10 of integer;                // 1D integet array [1~10]
+12: var b : array 5 to 15 of integer;                // 1D integet array [6~15]
+13: var c : array 1 to 5 of array 1 to 5 of integer; // 2D integer array [1~5][1~5]
+14: 
+15: // main program
+16: begin
+17:     var a: array 1 to 3 of boolean;                               // ok, in nested scope
+18:     var b, c : array 1 to 5 of array 1 to 5 of boolean;           // 2D boolean array [1~5][1~5]
+19:     var e : boolean;   
+20:  
+21:     e := a[2];          // ok, LHS=scalar RHS=scalar
+22:     c := b;             // ok, b,c are the same size  
+23:     c[1] := b[2];       // ok
+24:     b[1][1] := a[2];    // ok, LHS=scalar RHS=scalar
+########## Error at Line#25: type mismatch, LHS= boolean  , RHS= boolean [3]  ##########
+25:     b[1][1] := a;       // error, LHS=scalar RHS=array
+########## Error at Line#26: type mismatch, LHS= boolean [5][5] , RHS= boolean   ##########
+26:     b := a[2];          // error, LHS=string RHS=boolean
+27:     a[3] := 1+2<3;      // ok
+########## Error at Line#28: type mismatch, LHS= boolean  , RHS= integer   ##########
+28:     a[1] := 86;         // error, LHS=boolean RHS=integer
+29: 
+30: 
+31:     a[4] := true;       // out of range, NO need to detect
+32: 
+33: end
+34: end Array
+35: 
+=================================================================================================================================
+Pattern name: 
+SymbolDef/Identifier.p
+  
+1: /*
+2:  * Identifier
+3:  */
+<id: Identifier>
+<;>
+4: Identifier;
+5: 
+6: //&P-
+7: //&T-
+8: //&D-
+9: 
+10: var a, b: integer;
+11: 
+12: func( aa, bb : integer ) : integer ;
+13: begin
+14:     var aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbb : string;         
+########## Error at Line#15: symbol aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa is redeclared ##########
+15:     var aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaccc : string;  // error, variable redefine
+16:     return 10;
+17: end
+18: end func
+19: 
+20: // main program
+21: begin
+22: 
+23:     var a, b: integer;      // ok, in nested scope
+24:     var d: boolean;
+25:     var i, j, k: integer;
+26:     var aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbb : string;         
+27: 
+28:     i := 0;
+29:     while i < 10 do
+30:     begin    
+31:         var i : boolean;    // ok
+32:         var aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbb : string;         
+########## Error at Line#33: symbol aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa is redeclared ##########
+33:         var aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaddd : real;  // error, variable redefine
+34:         print i;
+35:         print " ";
+36:     end
+37:         i := i+1;
+38:     end do
+39:     
+40:     for i:=1 to 10 do
+41:         begin
+42:              var aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbb : string;         
+########## Error at Line#43: symbol aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa is redeclared ##########
+43:              var aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaccc : integer;  // error, variable redefine
+44:         end
+45:     end do
+46:          
+47: 
+48: end
+49: end Identifier
+50: 
+=================================================================================================================================
+Pattern name: 
+SymbolDef/Loopvariable.p
+  
+1: /*
+2:  * Loopvariable
+3:  */
+4: //&P-
+5: //&T-
+6: //&D-
+7: Loopvariable;
+8: 
+9: 
+10: var a, b: integer;
+11: 
+12: func( aa, bb : integer ) : integer ;
+13: begin
+14:     
+15:     var b : string;         // ok, in nested scope
+16:     return 10;
+17: end
+18: end func
+19: 
+20: // main program
+21: begin
+22: 
+23:     var a, b: integer;      // ok, in nested scope
+24:     var d: boolean;
+25: 
+########## Error at Line#26: loop parameter's lower bound >= uppper bound ########## 
+26:     for i:=10 to 1 do   //error
+27:     begin
+28:     end
+29:     end do
+30: 
+########## Error at Line#31: lower or upper bound of loop parameter < 0 ########## 
+31:     for i:=-100 to 1 do   //error
+32:     begin
+33:     end
+34:     end do
+35:     
+36:     for i:=1 to 10 do
+37:     begin
+38:          for j:=1 to 10 do
+39:          begin
+########## Error at Line#40: symbol i is redeclared ##########
+40:               var i : integer;    // error, loop variable i redefine
+########## Error at Line#41: symbol j is redeclared ##########
+41:               var j : 10;    // error, loop variable j redefine
+42:          end
+43:          end do
+44:     end
+45:     end do
+46:     
+47: end
+48: end Loopvariable
+49: 
+=================================================================================================================================
+Pattern name: 
+SymbolDef/Redefined.p
+  
+1: /*
+2:  * Redefined
+3:  */
+4: //&P-
+5: //&T-
+6: //&D-
+7: Redefined;
+8: 
+9: 
+10: var a, b: integer;
+11: 
+12: func( aa, bb : integer ) : integer ;
+13: begin
+########## Error at Line#14: symbol aa is redeclared ##########
+14:     var aa : boolean;       // error, var aa redeclared as parameter
+15:     var b : string;         // ok, in nested scope
+########## Error at Line#16: symbol b is redeclared ##########
+16:     var b: string;          // error, var b redeclared
+17:     return 10;
+18: end
+19: end func
+20: 
+21: // main program
+22: begin
+23: 
+24:     var a, b, c: integer;      // ok, in nested scope
+########## Error at Line#25: symbol c is redeclared ##########
+25:     var c: boolean;            // error, var c redeclared
+26:     var i : integer;
+########## Error at Line#27: symbol i is redeclared ##########
+27:     var i : string;		// error, var i redeclared
+28:     var ii: integer;
+29: 
+30:     ii := 0;
+31:     while ii < 10 do
+32:         begin    
+33:             var a : boolean;    // ok, in nested scope
+########## Error at Line#34: symbol a is redeclared ##########
+34:             var a : string;     // error, var a redeclared
+35:             print ii;
+36:             print " ";
+37:         end
+38:         ii := ii+1;
+39:     end do
+40:     
+41: end
+42: end Redefined
+43: 
+=================================================================================================================================
+Pattern name: 
+SymbolDef/ReturnStmt.p
+  
+1: /**
+2:  * ReturnStmt.p: test return statement 
+3:  */
+4: 
+5: //&D-
+6: //&T-
+7: //&P-
+8: 
+9: ReturnStmt;
+10: 
+11: fun1();
+12: begin
+########## Error at Line#13: void function cannot be returned ##########
+13:         return "true";                     // error, fun1 has no return type
+14: end
+15: end fun1
+16: 
+17: fun2():integer;
+18: begin
+########## Error at Line#19: return type mismatch ##########
+19:     return "true";      //error
+20: end
+21: end fun2
+22: 
+23: fun3();
+24: begin
+25:         if 1 < 2 then
+########## Error at Line#26: void function cannot be returned ##########
+26:                 return 2147483647;          // error, fun3 has no return type
+27:         else
+28:         end if
+29: end
+30: end fun3
+31: 
+32: 
+33: begin
+34:         var a: integer;
+35: 
+########## Error at Line#36: program cannot be returned ##########
+36:         return a+1;                          // error, program cannot return
+37: 
+########## Error at Line#38: program cannot be returned ##########
+38:         return true;                         // error, program cannot return
+39: 
+40: end
+41: end ReturnStmt
+=================================================================================================================================
+Pattern name: 
+SymbolDef/Undefine.p
+  
+1: /*
+2:  * Undefine
+3:  */
+4: //&P-
+5: //&T-
+6: //&D-
+7: Undefine;
+8: 
+9: 
+10: var a, b: integer;
+11: 
+12: func( aa, bb : integer ) : integer ;
+13: begin
+14:     
+15:     var b : string;         // ok, in nested scope
+########## Error at Line#16: 'c' is not declared ##########
+########## Error at Line#16: 'c' is not declared ##########
+16:     aa := c;                // error, var c undeclared
+########## Error at Line#17: 'c' is not declared ##########
+17:     print c;                // error, var c undeclared
+18:     return 10;
+19: end
+20: end func
+21: 
+22: // main program
+23: begin
+24: 
+25:     var a, b: integer;      // ok, in nested scope
+26:     var d: boolean;
+27:     var i : integer;
+28: 
+########## Error at Line#29: 'aa' is not declared ##########
+########## Error at Line#29: 'aa' is not declared ##########
+29:     d := aa;                // error, var aa undeclared
+########## Error at Line#30: 'c' is not declared ##########
+30:     print c;                // error, var c undeclared
+31:     i := 0;
+32:     while i < 10 do
+33:     begin    
+34:         var a : boolean;    // ok, in nested scope
+########## Error at Line#35: 'c' is not declared ##########
+35:         c := a;             // error, var c undeclared
+36:         print i;
+37:         print " ";
+38:     end
+39:         i := i+1;
+40:     end do
+41: 
+42: end
+43: end Undefine
+44: 
+=================================================================================================================================
+Pattern name: 
+TypeCheck/assignment.p
+  
+1: /*
+2: check type between assignment
+3: */
+4: 
+5: //&T-
+6: //&P-
+7: //&D-
+8: assignment;
+9: 
+10: 
+11: var x : integer;
+12: var y : real;
+13: 
+14: fun() : integer;
+15: begin
+16:         return 100;
+17: end
+18: end fun
+19: 
+20: func(a:integer; b:real) : integer;
+21: begin
+22:         var c : integer;
+23:         var d : real;
+24: 
+25:         c := a;          //OK
+########## Error at Line#26: type mismatch, LHS= integer  , RHS= real   ##########
+26:         c := b;          //error, b is not an integer type
+########## Error at Line#27: type mismatch, LHS= integer  , RHS= real   ##########
+27:         c := a + 3.14;   //error, 3.14 is not an integer type
+28:         d := a + 100;    //OK
+29:         d := a + 3.14;   //OK
+30:         d := b + 100;    //OK
+31:         d := b + 3.14;   //OK
+32:         d := a + b;      //OK
+33: 
+34:         return a;
+35: end
+36: end func
+37: begin
+38:         var aa : integer;
+39:         var bb : real;
+40:         var cc : boolean;
+41:         var dd : string;
+42: 
+43:         aa := fun() + 100;      //OK
+44:         aa := func(aa, bb);     //OK
+########## Error at Line#45: type mismatch, LHS= integer  , RHS= real   ##########
+45:         aa := 3.14;             //error, 3.14 is not an integer type
+46:         bb := fun() + 100;      //OK
+47:         bb := fun() + 3.14;     //OK
+48:         bb := 3.14E9;           //OK
+49:         bb := 3.14e8 + 3.14;    //OK
+50:         bb := x + 100;          //OK
+51:         bb := x + 3.14;         //OK
+########## Error at Line#52: type mismatch, LHS= real  , RHS= boolean   ##########
+52:         bb := aa mod 3>aa mod 2;//error, true is not a real type
+53:         cc := true;             //OK
+54:         cc := false;            //OK
+########## Error at Line#55: type mismatch, LHS= boolean  , RHS= real   ##########
+55:         cc := aa + bb;          //error, aa and bb is not a boolean type
+56:         dd := "Hello World";    //OK
+########## Error at Line#57: type mismatch, LHS= string  , RHS= real   ##########
+57:         dd := 3.14;             //error, 3.14 is not a string type
+58: 
+59: end
+60: end assignment
+61: 
+=================================================================================================================================
+Pattern name: 
+TypeCheck/expression.p
+  
+1: /*
+2: check expression properties
+3: */
+4: 
+5: //&T-
+6: //&P-
+7: //&D-
+8: expression;
+9: 
+10: 
+11: begin
+12:         var a : integer;
+13:         var b : real;
+14:         var c : boolean;
+15:         var d : string;
+16: 
+########## Error at Line#17: operand(s) between 'mod' are not integer
+17:         a := 100 mod 3.14;                      //error, 3.14 is a real type
+18:         b := 100 + 3.14;                        //OK
+19:         b := 0 + 1 - 2 * 3 / 1 / 3.14;          //OK
+20:         b := (1 + a) * 4 - a + (a mod 3);       //OK
+########## Error at Line#21: operand(s) between 'or' are not boolean ##########
+21:         b := a or true;                         //error, a is an integer type
+########## Error at Line#22: operand of 'not' is not boolean ##########
+22:         b := not a;                             //error, false is not an integer type
+23:         c := true or false;                     //OK
+24:         c := (not true) and true;               //OK
+25:         c := a > 100;                           //OK
+########## Error at Line#26: operand(s) between '>' are not in same type ##########
+26:         c := a > b;                             //error, a is an integer type
+27:         d := "string";                          //OK
+28:         d := "string" + "string";               //OK
+########## Error at Line#29: operand(s) between '-' are string type ##########
+29:         d := "string" - "string";               //error in "-" operation
+########## Error at Line#30: operand(s) between '+' are not integer/real ##########
+30:         d := "string" + true;                   //error, true is a boolean type
+31: end
+32: end expression
+33: 
+=================================================================================================================================
+Pattern name: 
+TypeCheck/ifwhile.p
+  
+1: /*
+2: check the ability of if and while
+3: */
+4: 
+5: //&T-
+6: //&P-
+7: //&D-
+8: 
+9: ifwhile;
+10: begin
+11:         var a : integer;
+12:         var b : real;
+13:         var c : boolean;
+14:         var d : string;
+15: 
+16:         if true then
+17:         begin
+18:                 a := 10;
+19:         end
+20:         else
+21:         begin
+22:                 a := 5;
+23:         end
+24:         end if                                          //OK
+25:         
+26:         if c then
+########## Error at Line#27: if statement's operand is not boolean type ##########
+27:                 if a then                               //error, a is an integer type
+28:                 else
+29:                 end if
+30:         else
+31:         end if
+32: 
+33:         if c then               
+34:         else
+########## Error at Line#35: if statement's operand is not boolean type ##########
+35:                 if b then                               //error, b is a real type
+36:                 else
+37:                 end if
+38:         end if
+39: 
+40:         if c then
+########## Error at Line#41: while statement's operand is not boolean type ##########
+41:                 while a do                              //error, a is not a boolean type
+42:                 end do
+43:         else
+44:         end if
+45: 
+46:         if false then                                   //OK
+47:                 if true then
+48:                         while true do
+49:                                 while false do
+50:                                 end do
+51:                         end do
+52:                 else
+53:                 end if
+54:         else
+55:         end if
+56: 
+########## Error at Line#57: if statement's operand is not boolean type ##########
+57:         if "string" then                                //error, "srting" is a string type
+58:         else
+59:         end if
+60: 
+61:         if a > 100 then                                 //OK
+62:         else
+63:         end if
+64: 
+65:         while (not c) and true or (not false) do        //OK
+66:                 while a <> a do
+67:                 end do
+68:         end do
+69: 
+########## Error at Line#70: if statement's operand is not boolean type ##########
+70:         if "true" then                                  //error, "true" is not a boolean type
+71:         else
+72:         end if
+73: 
+########## Error at Line#74: while statement's operand is not boolean type ##########
+74:         while a * b + 100 do                            //error, b is not a boolean type
+75:         end do
+76: 
+77: end
+78: end ifwhile
+79: 
+=================================================================================================================================
+Pattern name: 
+TypeCheck/parapass.p
+  
+1: /*
+2: The type checking of parameter passing
+3: */
+4: 
+5: //&T-
+6: //&P-
+7: //&D-
+8: parapass;
+9: 
+10: 
+11: func1() : integer;
+12: begin
+13:         return 10;
+14: end
+15: end func1
+16: 
+17: func2(a:integer; b:boolean; c:real; d:string) : integer;
+18: begin
+19:         return 10;
+20: end
+21: end func2
+22: 
+23: func3(a:integer) : integer;
+24: begin
+25:         return 10;
+26: end
+27: end func3
+28: 
+29: func4(b:boolean) : integer;
+30: begin
+31:         return 10;
+32: end
+33: end func4
+34: 
+35: func5(c:real) : integer;
+36: begin
+37:         return 10;
+38: end
+39: end func5
+40: 
+41: func6(d:string) : integer;
+42: begin
+43:         return 10;
+44: end
+45: end func6
+46: 
+47: begin
+48: 
+49:         var re:integer;
+50:         var aa:integer;
+51:         var bb:boolean;
+52:         var cc:real;
+53:         var dd:string;
+54: 
+55:         re := func1();                  //OK
+########## Error at Line#56: too many arguments to function func1 ##########
+56:         re := func1(aa);                //error in aa
+57:         re := func2(aa, bb, cc, dd);    //OK
+########## Error at Line#58: too few arguments to function 'func2' ##########
+58:         re := func2();                  //error, lose 4 parameters
+59:         re := func3(123);               //OK
+########## Error at Line#60: parameter type mismatch ##########
+60:         re := func3(cc);                //error, cc is not an integer type
+61:         re := func4(true);              //OK
+########## Error at Line#62: parameter type mismatch ##########
+62:         re := func4(cc);                //error, cc is not a boolean type
+63:         re := func5(3.14);              //OK
+64:         re := func5(aa);                //OK, type coercion
+########## Error at Line#65: parameter type mismatch ##########
+65:         re := func5(dd);                //error, dd is not a real type
+66:         re := func6("abc");             //OK
+########## Error at Line#67: parameter type mismatch ##########
+67:         re := func6(aa);                //error, aa is not a string type
+68: 
+69: end
+70: end parapass
+71: 
+=================================================================================================================================
+Pattern name: 
+TypeCheck/printread.p
+  
+1: /*
+2: check the ability of print and read
+3: */
+4: 
+5: //This is a GOOD case, should not report error!
+6: 
+7: //&T-
+8: //&P-
+9: //&D-
+10: 
+11: 
+12: printread;
+13: begin
+14:         var a : integer;
+15:         var b : real;
+16:         var c : boolean;
+17:         var d : string;
+18: 
+19:         print a;
+20:         print b;
+21:         print c;
+22:         print d;
+23: 
+24:         print 100;
+25:         print 3.14;
+26:         print true;
+27:         print "string";
+28: 
+29:         read a;
+30:         read b;
+31:         read c;
+32:         read d;
+33: 
+34: end
+35: end printread
+36: 
+=================================================================================================================================
+Pattern name: 
+ArrayTypeCheck/arrayParam.p
+  
+1: /*
+2:  * arrayParam.p : test parameter number and type consistency
+3:  */ 
+4: //&T-
+5: //&P-
+6: //&D-
+7: 
+8: arrayParam;
+9: 
+10: fun2( a: array 1 to 10 of integer ; b : array 3 to 5 of array 3 to 7 of real ): integer;
+11: begin
+12:         return a[2];   
+13: end
+14: end fun2
+15: 
+16: fun3( a: array 1 to 5 of boolean ; b: array 1 to 5 of string ): string;
+17: begin
+18:         if a[1] then
+19:                 return "true";
+20:         else
+21:                 return "false";
+22:         end if
+23: end
+24: end fun3
+25: 
+26: // main program
+27: begin
+28: 
+29:         var a : array 1 to 3 of array 1 to 5 of real;      // 2D 3x5 real array
+30:         var b : array 3 to 5 of array 3 to 7 of boolean;      // 2D 3x5 boolean array
+31:         var c : array 1 to 10 of integer;                     // 1D size=10 integer array
+32:         var d : array 1 to 10 of array 1 to 10 of integer;    // 2D 10x10 integer array
+33:         var e : array 2 to 6 of string;                       // 1D size=5 string array
+34:         var f : array 1 to 5 of boolean;                      // 1D size=5 boolean array
+35: 
+36:         var ii : integer;
+37:         var s: string;
+38: 
+39:         ii := fun2( c, a );           // ok
+40:         ii := fun2( d[3], a );        // ok
+########## Error at Line#41: parameter type mismatch ##########
+41:         ii := fun2( c, d, c );        // error, decl:2 argument:3
+########## Error at Line#42: parameter type mismatch ##########
+42:         s := fun3( a, b );            // error, parameter 1,2 type inconsistent
+43:         s := fun3( f, e );            // ok
+44:         s := fun3( b[3], e );         // ok
+########## Error at Line#45: parameter type mismatch ##########
+45:         s := fun3( b[3][3], e );      // error, parameter 1 type inconsistent
+########## Error at Line#46: 'b' is 2 dimension(s), but reference in 3 dimension(s) ##########
+########## Error at Line#46: parameter type mismatch ##########
+46:         s := fun3( b[3][3][3], e );   // error, b decl dim=2 usage dim=3
+47: 
+48: end
+49: end arrayParam
+50: 
+=================================================================================================================================
+Pattern name: 
+ArrayTypeCheck/arrayPrintRead.p
+  
+1: /**
+2:  * arrayPrintRead.p: test print, read statement with array reference
+3:  */
+4: //&D-
+5: //&T-
+6: //&P-
+7: 
+8: arrayPrintRead;
+9: 
+10: begin
+11:         var a: array 1 to 5 of integer;                                 // 1D size=5 integer array
+12:         var b: array 3 to 7 of integer;                                 // 1D size=5 integer array
+13:         var c: array 1 to 5 of array 1 to 10 of integer;                // 2D 5*10 integer array
+14:         var d: array 10 to 14 of real;                                  // 1D size=5 real array
+15:         var e: array 1 to 2 of array 2 to 3 of array 1 to 5 of real;    // 3D 2*2*5 real array
+16:         var f: array 1 to 100 of string;                                // 1D size=100 string array
+17:         var g: string;
+18:         var h: array 1 to 2 of array 9 to 10 of boolean;                // 2D size=2*2 boolean array
+19: 
+########## Error at Line#20: read statement's operand is array type ##########
+20:         read h;                                                         // error, h=boolean[2][2]
+21:         read b[1];                                                      // ok
+22:         print b[2];                                                     // ok
+23:         print 1+2+a[5]+b[7]+c[1][1];                                    // ok
+24:         print 1+2+a[5]+b[7]+c[1][b[1]];                                 // ok
+25:         
+########## Error at Line#26: 'd' is 1 dimension(s), but reference in 2 dimension(s) ##########
+26:         print d[10][10];                                                // error, dimension error
+27:         read g;                                                         // ok
+28:         read f[100];                                                    // ok
+########## Error at Line#29: read statement's operand is array type ##########
+29:         read f;                                                         // error, f=string[100]
+########## Error at Line#30: print statement's operand is array type ##########
+30:         print c[1];                                                     // error, c[1]=integer[10]
+31:         print e[1][2][3];                                               // ok
+32:         print d[c[1][1]];                                               // ok
+########## Error at Line#33: array index cannot be arrya_type ##########
+33:         print d[c];                                                     // error, c=integer[5][10]
+34: 
+35: 
+36: 
+37: end
+38: end arrayPrintRead
+=================================================================================================================================
+Pattern name: 
+SymbolTable/advanceSym.p
+  
+1: /*
+2:  * advance_sym.p : Advanced symbol table info. dump check
+3:  * You should pass this pattern
+4:  */
+5: //&T-
+6: //&P-
+7: advanceSym;
+8: var a : array 1 to 10 of integer;
+9: var aa : array 1 to 10 of boolean;
+10: var c : 123;   
+11: var d : "bye~";
+12: var e : true;
+13: 
+14: 
+15: // function with param, no return type
+16: fun2( a: array 1 to 10 of array 1 to 5 of integer ; c: integer);
+17: begin
+18:     var d : integer;
+19: 
+20:     begin
+21:         var a : string;
+================================================================================================================
+Name                             Kind       Level      Type                             Attribute               
+----------------------------------------------------------------------------------------------------------------
+a                                variable   2(local)  string                           
+================================================================================================================
+22:     end
+================================================================================================================
+Name                             Kind       Level      Type                             Attribute               
+----------------------------------------------------------------------------------------------------------------
+a                                parameter  1(local)  integer [10][5]                  
+c                                parameter  1(local)  integer                          
+d                                variable   1(local)  integer                          
+================================================================================================================
+23: end
+24: end fun2
+25: 
+26: 
+27: // main program
+28: begin
+29: 
+30:     var a : integer;
+31:     begin
+32:         var a : string;
+33:         begin
+34:             var a : integer;
+================================================================================================================
+Name                             Kind       Level      Type                             Attribute               
+----------------------------------------------------------------------------------------------------------------
+a                                variable   3(local)  integer                          
+================================================================================================================
+35:         end
+================================================================================================================
+Name                             Kind       Level      Type                             Attribute               
+----------------------------------------------------------------------------------------------------------------
+a                                variable   2(local)  string                           
+================================================================================================================
+36:     end
+37: 
+================================================================================================================
+Name                             Kind       Level      Type                             Attribute               
+----------------------------------------------------------------------------------------------------------------
+a                                variable   1(local)  integer                          
+================================================================================================================
+38: end
+================================================================================================================
+Name                             Kind       Level      Type                             Attribute               
+----------------------------------------------------------------------------------------------------------------
+advanceSym                       program    0(global) void                             
+a                                variable   0(global) integer [10]                     
+aa                               variable   0(global) boolean [10]                     
+c                                constant   0(global) integer                          123
+d                                constant   0(global) string                           bye~
+e                                constant   0(global) boolean                          true
+fun2                             function   0(global) void                             integer [10][5] , integer  , 
+================================================================================================================
+39: end advanceSym
+40: 
+=================================================================================================================================
+Pattern name: 
+SymbolTable/basicSym.p
+  
+1: /**
+2:  * basic_sym.p : basic symbol table info. dump check
+3:  */
+4: //&T-
+5: //&P-
+6: basicSym;
+7: 
+8: var a,b : integer;
+9: var c : boolean;
+10: var d : string;
+11: var r : real;
+12: 
+13: // function without param and return type
+14: fun();
+15: begin
+16: 
+================================================================================================================
+Name                             Kind       Level      Type                             Attribute               
+----------------------------------------------------------------------------------------------------------------
+================================================================================================================
+17: end 
+18: end fun
+19: 
+20: // function with return type, no param
+21: fun2() : boolean;
+22: begin
+23:     return true;
+================================================================================================================
+Name                             Kind       Level      Type                             Attribute               
+----------------------------------------------------------------------------------------------------------------
+================================================================================================================
+24: end
+25: end fun2
+26: 
+27: // main program
+28: begin
+29:    var aaa : integer;
+30:    var bbb : boolean;
+31:    var ccc : string;
+32:    var rrr : real;
+33:    var fff : 123;
+34:    var ggg : true;
+35:    var hhh : "hello\n";
+36:    var iii : 2.86;
+37:    // without statement
+================================================================================================================
+Name                             Kind       Level      Type                             Attribute               
+----------------------------------------------------------------------------------------------------------------
+aaa                              variable   1(local)  integer                          
+bbb                              variable   1(local)  boolean                          
+ccc                              variable   1(local)  string                           
+rrr                              variable   1(local)  real                             
+fff                              constant   1(local)  integer                          123
+ggg                              constant   1(local)  boolean                          true
+hhh                              constant   1(local)  string                           hello\n
+iii                              constant   1(local)  real                             2.860000
+================================================================================================================
+38: end
+================================================================================================================
+Name                             Kind       Level      Type                             Attribute               
+----------------------------------------------------------------------------------------------------------------
+basicSym                         program    0(global) void                             
+a                                variable   0(global) integer                          
+b                                variable   0(global) integer                          
+c                                variable   0(global) boolean                          
+d                                variable   0(global) string                           
+r                                variable   0(global) real                             
+fun                              function   0(global) void                             
+fun2                             function   0(global) boolean                          
+================================================================================================================
+39: end basicSym
+40: 
+=================================================================================================================================
+Pattern name: 
+Basic/Functionname.p
+  
+1: /*
+2:  *  Function name
+3:  */ 
+4: 
+5: //&P-
+6: //&D-
+7: //&T-
+8: Functionname;
+9: 
+10: 
+11: func(a:integer);
+12: begin
+13: 
+14: end
+15: end func               // ok
+16: 
+17: fun() : integer;
+18: begin
+19:     return 10;
+20: end
+########## Error at Line #21: the end of the functionName mismatch ########## 
+21: end funny              // error, fun != funny
+22: 
+23: fun1() : boolean; 
+24: begin
+25:     return true;
+26: end
+########## Error at Line #27: the end of the functionName mismatch ########## 
+27: end funny1              // error, fun1 != funny1
+28: 
+29: fun3() : integer;     
+30: begin
+31:     return 10;
+32: end
+########## Error at Line #33: the end of the functionName mismatch ########## 
+33: end fun2		// error, fun3 != fun2
+34:      
+35: 
+36: fun6();   // without return
+37: begin
+38: 
+39: end
+########## Error at Line #40: the end of the functionName mismatch ########## 
+40: end fun4                // error, fun6 != fun4
+41: 
+42: 
+43: // main program
+44: begin
+45:     // nothing
+46: end
+47: end Functionname  
+48: 
+=================================================================================================================================
+Pattern name: 
+Basic/profilname.p
+  
+1: /*
+2: check file name and program name
+3: */
+4: 
+5: //&P-
+6: //&T-
+7: //&D-
+8: 
+########## Error at Line#9: program beginning ID inconsist with file name ########## 
+9: profilnames;
+10: begin
+11: 
+12: 
+13: 
+14: end
+########## Error at Line#15: program end ID inconsist with file name ########## 
+15: end profilnames
+16: 
+=================================================================================================================================
+Pattern name: 
+SymbolDef/Array.p
+  
+1: /*
+2:  *  Array
+3:  */
+4: 
+5: //&T-
+6: //&P-
+7: //&D-
+8: Array;
+9: 
+10: 
+11: var a : array 1 to 10 of integer;                // 1D integet array [1~10]
+12: var b : array 5 to 15 of integer;                // 1D integet array [6~15]
+13: var c : array 1 to 5 of array 1 to 5 of integer; // 2D integer array [1~5][1~5]
+14: 
+15: // main program
+16: begin
+17:     var a: array 1 to 3 of boolean;                               // ok, in nested scope
+18:     var b, c : array 1 to 5 of array 1 to 5 of boolean;           // 2D boolean array [1~5][1~5]
+19:     var e : boolean;   
+20:  
+21:     e := a[2];          // ok, LHS=scalar RHS=scalar
+22:     c := b;             // ok, b,c are the same size  
+23:     c[1] := b[2];       // ok
+24:     b[1][1] := a[2];    // ok, LHS=scalar RHS=scalar
+########## Error at Line#25: type mismatch, LHS= boolean  , RHS= boolean [3]  ##########
+25:     b[1][1] := a;       // error, LHS=scalar RHS=array
+########## Error at Line#26: type mismatch, LHS= boolean [5][5] , RHS= boolean   ##########
+26:     b := a[2];          // error, LHS=string RHS=boolean
+27:     a[3] := 1+2<3;      // ok
+########## Error at Line#28: type mismatch, LHS= boolean  , RHS= integer   ##########
+28:     a[1] := 86;         // error, LHS=boolean RHS=integer
+29: 
+30: 
+31:     a[4] := true;       // out of range, NO need to detect
+32: 
+33: end
+34: end Array
+35: 
+=================================================================================================================================
+Pattern name: 
+SymbolDef/Identifier.p
+  
+1: /*
+2:  * Identifier
+3:  */
+<id: Identifier>
+<;>
+4: Identifier;
+5: 
+6: //&P-
+7: //&T-
+8: //&D-
+9: 
+10: var a, b: integer;
+11: 
+12: func( aa, bb : integer ) : integer ;
+13: begin
+14:     var aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbb : string;         
+########## Error at Line#15: symbol aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa is redeclared ##########
+15:     var aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaccc : string;  // error, variable redefine
+16:     return 10;
+17: end
+18: end func
+19: 
+20: // main program
+21: begin
+22: 
+23:     var a, b: integer;      // ok, in nested scope
+24:     var d: boolean;
+25:     var i, j, k: integer;
+26:     var aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbb : string;         
+27: 
+28:     i := 0;
+29:     while i < 10 do
+30:     begin    
+31:         var i : boolean;    // ok
+32:         var aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbb : string;         
+########## Error at Line#33: symbol aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa is redeclared ##########
+33:         var aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaddd : real;  // error, variable redefine
+34:         print i;
+35:         print " ";
+36:     end
+37:         i := i+1;
+38:     end do
+39:     
+40:     for i:=1 to 10 do
+41:         begin
+42:              var aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbb : string;         
+########## Error at Line#43: symbol aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa is redeclared ##########
+43:              var aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaccc : integer;  // error, variable redefine
+44:         end
+45:     end do
+46:          
+47: 
+48: end
+49: end Identifier
+50: 
+=================================================================================================================================
+Pattern name: 
+SymbolDef/Loopvariable.p
+  
+1: /*
+2:  * Loopvariable
+3:  */
+4: //&P-
+5: //&T-
+6: //&D-
+7: Loopvariable;
+8: 
+9: 
+10: var a, b: integer;
+11: 
+12: func( aa, bb : integer ) : integer ;
+13: begin
+14:     
+15:     var b : string;         // ok, in nested scope
+16:     return 10;
+17: end
+18: end func
+19: 
+20: // main program
+21: begin
+22: 
+23:     var a, b: integer;      // ok, in nested scope
+24:     var d: boolean;
+25: 
+########## Error at Line#26: loop parameter's lower bound >= uppper bound ########## 
+26:     for i:=10 to 1 do   //error
+27:     begin
+28:     end
+29:     end do
+30: 
+########## Error at Line#31: lower or upper bound of loop parameter < 0 ########## 
+31:     for i:=-100 to 1 do   //error
+32:     begin
+33:     end
+34:     end do
+35:     
+36:     for i:=1 to 10 do
+37:     begin
+38:          for j:=1 to 10 do
+39:          begin
+########## Error at Line#40: symbol i is redeclared ##########
+40:               var i : integer;    // error, loop variable i redefine
+########## Error at Line#41: symbol j is redeclared ##########
+41:               var j : 10;    // error, loop variable j redefine
+42:          end
+43:          end do
+44:     end
+45:     end do
+46:     
+47: end
+48: end Loopvariable
+49: 
+=================================================================================================================================
+Pattern name: 
+SymbolDef/Redefined.p
+  
+1: /*
+2:  * Redefined
+3:  */
+4: //&P-
+5: //&T-
+6: //&D-
+7: Redefined;
+8: 
+9: 
+10: var a, b: integer;
+11: 
+12: func( aa, bb : integer ) : integer ;
+13: begin
+########## Error at Line#14: symbol aa is redeclared ##########
+14:     var aa : boolean;       // error, var aa redeclared as parameter
+15:     var b : string;         // ok, in nested scope
+########## Error at Line#16: symbol b is redeclared ##########
+16:     var b: string;          // error, var b redeclared
+17:     return 10;
+18: end
+19: end func
+20: 
+21: // main program
+22: begin
+23: 
+24:     var a, b, c: integer;      // ok, in nested scope
+########## Error at Line#25: symbol c is redeclared ##########
+25:     var c: boolean;            // error, var c redeclared
+26:     var i : integer;
+########## Error at Line#27: symbol i is redeclared ##########
+27:     var i : string;		// error, var i redeclared
+28:     var ii: integer;
+29: 
+30:     ii := 0;
+31:     while ii < 10 do
+32:         begin    
+33:             var a : boolean;    // ok, in nested scope
+########## Error at Line#34: symbol a is redeclared ##########
+34:             var a : string;     // error, var a redeclared
+35:             print ii;
+36:             print " ";
+37:         end
+38:         ii := ii+1;
+39:     end do
+40:     
+41: end
+42: end Redefined
+43: 
+=================================================================================================================================
+Pattern name: 
+SymbolDef/ReturnStmt.p
+  
+1: /**
+2:  * ReturnStmt.p: test return statement 
+3:  */
+4: 
+5: //&D-
+6: //&T-
+7: //&P-
+8: 
+9: ReturnStmt;
+10: 
+11: fun1();
+12: begin
+########## Error at Line#13: void function cannot be returned ##########
+13:         return "true";                     // error, fun1 has no return type
+14: end
+15: end fun1
+16: 
+17: fun2():integer;
+18: begin
+########## Error at Line#19: return type mismatch ##########
+19:     return "true";      //error
+20: end
+21: end fun2
+22: 
+23: fun3();
+24: begin
+25:         if 1 < 2 then
+########## Error at Line#26: void function cannot be returned ##########
+26:                 return 2147483647;          // error, fun3 has no return type
+27:         else
+28:         end if
+29: end
+30: end fun3
+31: 
+32: 
+33: begin
+34:         var a: integer;
+35: 
+########## Error at Line#36: program cannot be returned ##########
+36:         return a+1;                          // error, program cannot return
+37: 
+########## Error at Line#38: program cannot be returned ##########
+38:         return true;                         // error, program cannot return
+39: 
+40: end
+41: end ReturnStmt
+=================================================================================================================================
+Pattern name: 
+SymbolDef/Undefine.p
+  
+1: /*
+2:  * Undefine
+3:  */
+4: //&P-
+5: //&T-
+6: //&D-
+7: Undefine;
+8: 
+9: 
+10: var a, b: integer;
+11: 
+12: func( aa, bb : integer ) : integer ;
+13: begin
+14:     
+15:     var b : string;         // ok, in nested scope
+########## Error at Line#16: 'c' is not declared ##########
+########## Error at Line#16: 'c' is not declared ##########
+16:     aa := c;                // error, var c undeclared
+########## Error at Line#17: 'c' is not declared ##########
+17:     print c;                // error, var c undeclared
+18:     return 10;
+19: end
+20: end func
+21: 
+22: // main program
+23: begin
+24: 
+25:     var a, b: integer;      // ok, in nested scope
+26:     var d: boolean;
+27:     var i : integer;
+28: 
+########## Error at Line#29: 'aa' is not declared ##########
+########## Error at Line#29: 'aa' is not declared ##########
+29:     d := aa;                // error, var aa undeclared
+########## Error at Line#30: 'c' is not declared ##########
+30:     print c;                // error, var c undeclared
+31:     i := 0;
+32:     while i < 10 do
+33:     begin    
+34:         var a : boolean;    // ok, in nested scope
+########## Error at Line#35: 'c' is not declared ##########
+35:         c := a;             // error, var c undeclared
+36:         print i;
+37:         print " ";
+38:     end
+39:         i := i+1;
+40:     end do
+41: 
+42: end
+43: end Undefine
+44: 
+=================================================================================================================================
+Pattern name: 
+TypeCheck/assignment.p
+  
+1: /*
+2: check type between assignment
+3: */
+4: 
+5: //&T-
+6: //&P-
+7: //&D-
+8: assignment;
+9: 
+10: 
+11: var x : integer;
+12: var y : real;
+13: 
+14: fun() : integer;
+15: begin
+16:         return 100;
+17: end
+18: end fun
+19: 
+20: func(a:integer; b:real) : integer;
+21: begin
+22:         var c : integer;
+23:         var d : real;
+24: 
+25:         c := a;          //OK
+########## Error at Line#26: type mismatch, LHS= integer  , RHS= real   ##########
+26:         c := b;          //error, b is not an integer type
+########## Error at Line#27: type mismatch, LHS= integer  , RHS= real   ##########
+27:         c := a + 3.14;   //error, 3.14 is not an integer type
+28:         d := a + 100;    //OK
+29:         d := a + 3.14;   //OK
+30:         d := b + 100;    //OK
+31:         d := b + 3.14;   //OK
+32:         d := a + b;      //OK
+33: 
+34:         return a;
+35: end
+36: end func
+37: begin
+38:         var aa : integer;
+39:         var bb : real;
+40:         var cc : boolean;
+41:         var dd : string;
+42: 
+43:         aa := fun() + 100;      //OK
+44:         aa := func(aa, bb);     //OK
+########## Error at Line#45: type mismatch, LHS= integer  , RHS= real   ##########
+45:         aa := 3.14;             //error, 3.14 is not an integer type
+46:         bb := fun() + 100;      //OK
+47:         bb := fun() + 3.14;     //OK
+48:         bb := 3.14E9;           //OK
+49:         bb := 3.14e8 + 3.14;    //OK
+50:         bb := x + 100;          //OK
+51:         bb := x + 3.14;         //OK
+########## Error at Line#52: type mismatch, LHS= real  , RHS= boolean   ##########
+52:         bb := aa mod 3>aa mod 2;//error, true is not a real type
+53:         cc := true;             //OK
+54:         cc := false;            //OK
+########## Error at Line#55: type mismatch, LHS= boolean  , RHS= real   ##########
+55:         cc := aa + bb;          //error, aa and bb is not a boolean type
+56:         dd := "Hello World";    //OK
+########## Error at Line#57: type mismatch, LHS= string  , RHS= real   ##########
+57:         dd := 3.14;             //error, 3.14 is not a string type
+58: 
+59: end
+60: end assignment
+61: 
+=================================================================================================================================
+Pattern name: 
+TypeCheck/expression.p
+  
+1: /*
+2: check expression properties
+3: */
+4: 
+5: //&T-
+6: //&P-
+7: //&D-
+8: expression;
+9: 
+10: 
+11: begin
+12:         var a : integer;
+13:         var b : real;
+14:         var c : boolean;
+15:         var d : string;
+16: 
+########## Error at Line#17: operand(s) between 'mod' are not integer
+17:         a := 100 mod 3.14;                      //error, 3.14 is a real type
+18:         b := 100 + 3.14;                        //OK
+19:         b := 0 + 1 - 2 * 3 / 1 / 3.14;          //OK
+20:         b := (1 + a) * 4 - a + (a mod 3);       //OK
+########## Error at Line#21: operand(s) between 'or' are not boolean ##########
+21:         b := a or true;                         //error, a is an integer type
+########## Error at Line#22: operand of 'not' is not boolean ##########
+22:         b := not a;                             //error, false is not an integer type
+23:         c := true or false;                     //OK
+24:         c := (not true) and true;               //OK
+25:         c := a > 100;                           //OK
+########## Error at Line#26: operand(s) between '>' are not in same type ##########
+26:         c := a > b;                             //error, a is an integer type
+27:         d := "string";                          //OK
+28:         d := "string" + "string";               //OK
+########## Error at Line#29: operand(s) between '-' are string type ##########
+29:         d := "string" - "string";               //error in "-" operation
+########## Error at Line#30: operand(s) between '+' are not integer/real ##########
+30:         d := "string" + true;                   //error, true is a boolean type
+31: end
+32: end expression
+33: 
+=================================================================================================================================
+Pattern name: 
+TypeCheck/ifwhile.p
+  
+1: /*
+2: check the ability of if and while
+3: */
+4: 
+5: //&T-
+6: //&P-
+7: //&D-
+8: 
+9: ifwhile;
+10: begin
+11:         var a : integer;
+12:         var b : real;
+13:         var c : boolean;
+14:         var d : string;
+15: 
+16:         if true then
+17:         begin
+18:                 a := 10;
+19:         end
+20:         else
+21:         begin
+22:                 a := 5;
+23:         end
+24:         end if                                          //OK
+25:         
+26:         if c then
+########## Error at Line#27: if statement's operand is not boolean type ##########
+27:                 if a then                               //error, a is an integer type
+28:                 else
+29:                 end if
+30:         else
+31:         end if
+32: 
+33:         if c then               
+34:         else
+########## Error at Line#35: if statement's operand is not boolean type ##########
+35:                 if b then                               //error, b is a real type
+36:                 else
+37:                 end if
+38:         end if
+39: 
+40:         if c then
+########## Error at Line#41: while statement's operand is not boolean type ##########
+41:                 while a do                              //error, a is not a boolean type
+42:                 end do
+43:         else
+44:         end if
+45: 
+46:         if false then                                   //OK
+47:                 if true then
+48:                         while true do
+49:                                 while false do
+50:                                 end do
+51:                         end do
+52:                 else
+53:                 end if
+54:         else
+55:         end if
+56: 
+########## Error at Line#57: if statement's operand is not boolean type ##########
+57:         if "string" then                                //error, "srting" is a string type
+58:         else
+59:         end if
+60: 
+61:         if a > 100 then                                 //OK
+62:         else
+63:         end if
+64: 
+65:         while (not c) and true or (not false) do        //OK
+66:                 while a <> a do
+67:                 end do
+68:         end do
+69: 
+########## Error at Line#70: if statement's operand is not boolean type ##########
+70:         if "true" then                                  //error, "true" is not a boolean type
+71:         else
+72:         end if
+73: 
+########## Error at Line#74: while statement's operand is not boolean type ##########
+74:         while a * b + 100 do                            //error, b is not a boolean type
+75:         end do
+76: 
+77: end
+78: end ifwhile
+79: 
+=================================================================================================================================
+Pattern name: 
+TypeCheck/parapass.p
+  
+1: /*
+2: The type checking of parameter passing
+3: */
+4: 
+5: //&T-
+6: //&P-
+7: //&D-
+8: parapass;
+9: 
+10: 
+11: func1() : integer;
+12: begin
+13:         return 10;
+14: end
+15: end func1
+16: 
+17: func2(a:integer; b:boolean; c:real; d:string) : integer;
+18: begin
+19:         return 10;
+20: end
+21: end func2
+22: 
+23: func3(a:integer) : integer;
+24: begin
+25:         return 10;
+26: end
+27: end func3
+28: 
+29: func4(b:boolean) : integer;
+30: begin
+31:         return 10;
+32: end
+33: end func4
+34: 
+35: func5(c:real) : integer;
+36: begin
+37:         return 10;
+38: end
+39: end func5
+40: 
+41: func6(d:string) : integer;
+42: begin
+43:         return 10;
+44: end
+45: end func6
+46: 
+47: begin
+48: 
+49:         var re:integer;
+50:         var aa:integer;
+51:         var bb:boolean;
+52:         var cc:real;
+53:         var dd:string;
+54: 
+55:         re := func1();                  //OK
+########## Error at Line#56: too many arguments to function func1 ##########
+56:         re := func1(aa);                //error in aa
+57:         re := func2(aa, bb, cc, dd);    //OK
+########## Error at Line#58: too few arguments to function 'func2' ##########
+58:         re := func2();                  //error, lose 4 parameters
+59:         re := func3(123);               //OK
+########## Error at Line#60: parameter type mismatch ##########
+60:         re := func3(cc);                //error, cc is not an integer type
+61:         re := func4(true);              //OK
+########## Error at Line#62: parameter type mismatch ##########
+62:         re := func4(cc);                //error, cc is not a boolean type
+63:         re := func5(3.14);              //OK
+64:         re := func5(aa);                //OK, type coercion
+########## Error at Line#65: parameter type mismatch ##########
+65:         re := func5(dd);                //error, dd is not a real type
+66:         re := func6("abc");             //OK
+########## Error at Line#67: parameter type mismatch ##########
+67:         re := func6(aa);                //error, aa is not a string type
+68: 
+69: end
+70: end parapass
+71: 
+=================================================================================================================================
+Pattern name: 
+TypeCheck/printread.p
+  
+1: /*
+2: check the ability of print and read
+3: */
+4: 
+5: //This is a GOOD case, should not report error!
+6: 
+7: //&T-
+8: //&P-
+9: //&D-
+10: 
+11: 
+12: printread;
+13: begin
+14:         var a : integer;
+15:         var b : real;
+16:         var c : boolean;
+17:         var d : string;
+18: 
+19:         print a;
+20:         print b;
+21:         print c;
+22:         print d;
+23: 
+24:         print 100;
+25:         print 3.14;
+26:         print true;
+27:         print "string";
+28: 
+29:         read a;
+30:         read b;
+31:         read c;
+32:         read d;
+33: 
+34: end
+35: end printread
+36: 
+=================================================================================================================================
+Pattern name: 
+ArrayTypeCheck/arrayParam.p
+  
+1: /*
+2:  * arrayParam.p : test parameter number and type consistency
+3:  */ 
+4: //&T-
+5: //&P-
+6: //&D-
+7: 
+8: arrayParam;
+9: 
+10: fun2( a: array 1 to 10 of integer ; b : array 3 to 5 of array 3 to 7 of real ): integer;
+11: begin
+12:         return a[2];   
+13: end
+14: end fun2
+15: 
+16: fun3( a: array 1 to 5 of boolean ; b: array 1 to 5 of string ): string;
+17: begin
+18:         if a[1] then
+19:                 return "true";
+20:         else
+21:                 return "false";
+22:         end if
+23: end
+24: end fun3
+25: 
+26: // main program
+27: begin
+28: 
+29:         var a : array 1 to 3 of array 1 to 5 of real;      // 2D 3x5 real array
+30:         var b : array 3 to 5 of array 3 to 7 of boolean;      // 2D 3x5 boolean array
+31:         var c : array 1 to 10 of integer;                     // 1D size=10 integer array
+32:         var d : array 1 to 10 of array 1 to 10 of integer;    // 2D 10x10 integer array
+33:         var e : array 2 to 6 of string;                       // 1D size=5 string array
+34:         var f : array 1 to 5 of boolean;                      // 1D size=5 boolean array
+35: 
+36:         var ii : integer;
+37:         var s: string;
+38: 
+39:         ii := fun2( c, a );           // ok
+40:         ii := fun2( d[3], a );        // ok
+########## Error at Line#41: parameter type mismatch ##########
+41:         ii := fun2( c, d, c );        // error, decl:2 argument:3
+########## Error at Line#42: parameter type mismatch ##########
+42:         s := fun3( a, b );            // error, parameter 1,2 type inconsistent
+43:         s := fun3( f, e );            // ok
+44:         s := fun3( b[3], e );         // ok
+########## Error at Line#45: parameter type mismatch ##########
+45:         s := fun3( b[3][3], e );      // error, parameter 1 type inconsistent
+########## Error at Line#46: 'b' is 2 dimension(s), but reference in 3 dimension(s) ##########
+########## Error at Line#46: parameter type mismatch ##########
+46:         s := fun3( b[3][3][3], e );   // error, b decl dim=2 usage dim=3
+47: 
+48: end
+49: end arrayParam
+50: 
+=================================================================================================================================
+Pattern name: 
+ArrayTypeCheck/arrayPrintRead.p
+  
+1: /**
+2:  * arrayPrintRead.p: test print, read statement with array reference
+3:  */
+4: //&D-
+5: //&T-
+6: //&P-
+7: 
+8: arrayPrintRead;
+9: 
+10: begin
+11:         var a: array 1 to 5 of integer;                                 // 1D size=5 integer array
+12:         var b: array 3 to 7 of integer;                                 // 1D size=5 integer array
+13:         var c: array 1 to 5 of array 1 to 10 of integer;                // 2D 5*10 integer array
+14:         var d: array 10 to 14 of real;                                  // 1D size=5 real array
+15:         var e: array 1 to 2 of array 2 to 3 of array 1 to 5 of real;    // 3D 2*2*5 real array
+16:         var f: array 1 to 100 of string;                                // 1D size=100 string array
+17:         var g: string;
+18:         var h: array 1 to 2 of array 9 to 10 of boolean;                // 2D size=2*2 boolean array
+19: 
+########## Error at Line#20: read statement's operand is array type ##########
+20:         read h;                                                         // error, h=boolean[2][2]
+21:         read b[1];                                                      // ok
+22:         print b[2];                                                     // ok
+23:         print 1+2+a[5]+b[7]+c[1][1];                                    // ok
+24:         print 1+2+a[5]+b[7]+c[1][b[1]];                                 // ok
+25:         
+########## Error at Line#26: 'd' is 1 dimension(s), but reference in 2 dimension(s) ##########
+26:         print d[10][10];                                                // error, dimension error
+27:         read g;                                                         // ok
+28:         read f[100];                                                    // ok
+########## Error at Line#29: read statement's operand is array type ##########
+29:         read f;                                                         // error, f=string[100]
+########## Error at Line#30: print statement's operand is array type ##########
+30:         print c[1];                                                     // error, c[1]=integer[10]
+31:         print e[1][2][3];                                               // ok
+32:         print d[c[1][1]];                                               // ok
+########## Error at Line#33: array index cannot be arrya_type ##########
+33:         print d[c];                                                     // error, c=integer[5][10]
+34: 
+35: 
+36: 
+37: end
+38: end arrayPrintRead
