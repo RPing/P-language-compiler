@@ -915,10 +915,6 @@ conditional_statement : IF boolean_expr{
                                         asm_literal_constant(&$2, t);
                                     else
                                         asm_id_reference(&$2, t);
-                                    if ($2.type.is_const)
-                                        asm_literal_constant(&$2, t);
-                                    else
-                                        asm_id_reference(&$2, t);
                                 } else {
                                     fprintf(asm_file, "%s", $2.asm_buf);
                                 }
@@ -947,7 +943,16 @@ then_continue : THEN statement{
 while_statement : WHILE {
                     fprintf(asm_file, "Lbegin_while_%d:\n", while_begin_num++);
                 }boolean_expr{
-                    fprintf(asm_file, "%s", $3.asm_buf);
+                    if (!$3.type.is_reference) {
+                        symbol_table_entry *t = NULL;
+                        if ($3.type.is_const)
+                            asm_literal_constant(&$3, t);
+                        else
+                            asm_id_reference(&$3, t);
+                    } else {
+                        fprintf(asm_file, "%s", $3.asm_buf);
+                    }
+
                     if ($3.type.v_type != T_BOOLEAN){
                         error("while statement's operand is not boolean type");
                     } else {
